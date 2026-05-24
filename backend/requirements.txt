@@ -1,0 +1,59 @@
+# =========================
+# FastAPI Core
+# =========================
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# =========================
+# MongoDB (Async)
+# =========================
+motor
+pymongo
+
+# =========================
+# Environment & Config
+# =========================
+python-dotenv
+
+# =========================
+# HTTP / Networking
+# =========================
+httpx
+requests
+
+# =========================
+# LangChain Ecosystem
+# =========================
+langchain
+langchain-core
+langchain-community
+langchain-openai
+
+# =========================
+# LangGraph (Agent workflows)
+# =========================
+langgraph
+
+# =========================
+# LangSmith (Tracing / Debugging)
+# =========================
+langsmith
+
+# =========================
+# MCP (Model Context Protocol tools)
+# =========================
+mcp
+
+# =========================
+# Async / Utils
+# =========================
+anyio
+tenacity
+
+# =========================
+# Optional (Common in AI backends)
+# =========================
+tiktoken
+orjson
