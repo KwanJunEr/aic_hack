@@ -57,3 +57,6 @@ tenacity
 # =========================
 tiktoken
 orjson
+
+passlib[bcrypt] 
+python-jose[email]
