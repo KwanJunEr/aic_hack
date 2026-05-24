@@ -1,7 +1,7 @@
 import About from "@/components/landing/About";
+import Features from "@/components/landing/Features";
 import HeroSection_05 from "@/components/landing/hero-section-with-gradient";
 import Header from "@/components/landing/LandingHeader";
-import Image from "next/image";
 
 export default function Home() {
   return (
@@ -9,6 +9,7 @@ export default function Home() {
         <Header/>
         <HeroSection_05/>
         <About/>
+        <Features/>
     </div>
   );
 }
