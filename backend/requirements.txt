@@ -58,5 +58,7 @@ tenacity
 tiktoken
 orjson
 
-passlib[bcrypt] 
+bcrypt
 python-jose[email]
+python-jose
+email-validator

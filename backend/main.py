@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.mcp.mcp_server import mcp
+from app.api.router import api_router
 
 app = FastAPI(
     title="AICHack Backend"
@@ -29,6 +30,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(api_router)
+
 
 @app.get("/")
 async def root():
@@ -45,7 +48,7 @@ async def health_check():
 async def start_fastapi():
 
     config = uvicorn.Config(
-        app,
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=True
