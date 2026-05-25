@@ -1,7 +1,7 @@
 from sqlalchemy import false, true
 
 
-[
+PRODUCT_SEED = [
   {
     "_id": {
       "$oid": "665a1f0000000000000001a1"
