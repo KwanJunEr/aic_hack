@@ -84,8 +84,15 @@ export default function SignInPage() {
         <div className="w-full max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* Logo/Brand */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl brand-gradient mb-4 shadow-lg shadow-primary/25 animate-in zoom-in duration-500">
-              <span className="text-2xl font-bold text-white">S</span>
+            <div className="inline-flex items-center gap-2.5 justify-center mb-4 animate-in zoom-in duration-500">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-rose-100 to-violet-100 border border-rose-200/60 shadow-md shadow-rose-200/30">
+                <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-rose-500" aria-hidden="true">
+                  <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  <path d="M9 12h6M9 16h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </div>
+              <span className="font-semibold text-xl tracking-tight text-gray-800">Req<span className="text-rose-400">tify</span></span>
             </div>
             <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
             <p className="text-muted-foreground mt-1">
