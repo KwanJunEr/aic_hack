@@ -49,38 +49,63 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* ── Base ── */
+  --background: oklch(1 0 0);                          /* pure white */
+  --foreground: oklch(0.213 0.014 17);                 /* gray-800 */
+
+  /* ── Card / Popover ── */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.213 0.014 17);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.213 0.014 17);
+
+  /* ── Primary — Rose-500 ── */
+  --primary: oklch(0.645 0.246 16.5);                  /* rose-500 #f43f5e */
+  --primary-foreground: oklch(1 0 0);                  /* white text on rose */
+
+  /* ── Secondary — Violet-100 tint ── */
+  --secondary: oklch(0.955 0.026 278);                 /* violet-100 #ede9fe */
+  --secondary-foreground: oklch(0.452 0.218 278);      /* violet-700 */
+
+  /* ── Muted ── */
+  --muted: oklch(0.975 0.015 16);                      /* rose-50 #fff1f2 */
+  --muted-foreground: oklch(0.477 0.013 17);           /* gray-500 */
+
+  /* ── Accent — Rose-50 ── */
+  --accent: oklch(0.975 0.015 16);                     /* rose-50 */
+  --accent-foreground: oklch(0.571 0.253 16);          /* rose-600 */
+
+  /* ── Destructive ── */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+
+  /* ── Border / Input / Ring ── */
+  --border: oklch(0.902 0.057 16);                     /* rose-200 #fecdd3 */
+  --input: oklch(0.902 0.057 16);                      /* rose-200 */
+  --ring: oklch(0.712 0.194 16.8);                     /* rose-400 #fb7185 */
+
+  /* ── Charts — rose → violet spectrum ── */
+  --chart-1: oklch(0.645 0.246 16.5);                  /* rose-500 */
+  --chart-2: oklch(0.607 0.232 278);                   /* violet-500 */
+  --chart-3: oklch(0.712 0.194 16.8);                  /* rose-400 */
+  --chart-4: oklch(0.72 0.185 278);                    /* violet-400 */
+  --chart-5: oklch(0.682 0.215 320);                   /* fuchsia-500 */
+
+  /* ── Radius ── */
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* ── Sidebar ── */
+  --sidebar: oklch(0.975 0.015 16);                    /* rose-50 */
+  --sidebar-foreground: oklch(0.213 0.014 17);
+  --sidebar-primary: oklch(0.645 0.246 16.5);          /* rose-500 */
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.955 0.026 278);            /* violet-100 */
+  --sidebar-accent-foreground: oklch(0.452 0.218 278); /* violet-700 */
+  --sidebar-border: oklch(0.902 0.057 16);             /* rose-200 */
+  --sidebar-ring: oklch(0.712 0.194 16.8);             /* rose-400 */
+
+  /* ── Brand gradient tokens (use in inline styles / arbitrary classes) ── */
+  --brand-from: #fb7185;                               /* rose-400 */
+  --brand-to: #8b5cf6;                                 /* violet-500 */
 }
 
 .dark {
@@ -132,11 +157,34 @@
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
+    display: none;
   }
 
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE/Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Brand gradient — matches landing hero/CTA buttons */
+  .brand-gradient {
+    background: linear-gradient(to right, #fb7185, #8b5cf6);
+  }
+
+  .brand-gradient-text {
+    background: linear-gradient(to right, #fb7185, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Subtle tinted surface for cards/sections on white backgrounds */
+  .surface-rose {
+    background-color: rgb(255 241 242 / 0.6);
+    border: 1px solid rgb(254 205 211 / 0.6);
+  }
+
+  .surface-violet {
+    background-color: rgb(245 243 255 / 0.6);
+    border: 1px solid rgb(221 214 254 / 0.6);
   }
 }

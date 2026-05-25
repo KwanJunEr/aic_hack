@@ -50,7 +50,7 @@ export default function Header() {
 
         {/* Login button */}
         <Link
-          href="/login"
+          href="/sign-in"
           className={[
             'shrink-0 rounded-xl px-6 py-1.5 text-sm font-medium transition-all duration-300',
             scrolled
