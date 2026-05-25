@@ -62,3 +62,6 @@ bcrypt
 python-jose[email]
 python-jose
 email-validator
+
+pydantic_settings
+bson

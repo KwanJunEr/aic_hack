@@ -1,4 +1,5 @@
 from app.db.client import users_collection
+from bson import ObjectId
 
 class UserRepository:
 
@@ -8,4 +9,9 @@ class UserRepository:
     async def find_by_email(self, email: str):
         return await users_collection.find_one({
             "email": email
+        })
+    
+    async def find_by_id(self, user_id:str):
+        return await users_collection.find_one({
+            "_id": ObjectId(user_id)
         })

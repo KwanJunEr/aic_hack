@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/main/Sidebar";
 import { DashboardHeader } from "@/components/main/MainHeader";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import React from "react";
+import { UserProvider } from "@/context/UserContext";
 
 export default function MainLayout({
   children,
@@ -11,6 +12,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
+    <UserProvider>
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
@@ -20,5 +22,6 @@ export default function MainLayout({
         </SidebarInset>
       </div>
     </SidebarProvider>
+    </UserProvider>
   );
 }

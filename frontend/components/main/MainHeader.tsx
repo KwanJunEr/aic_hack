@@ -15,8 +15,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useCurrentUser } from "@/context/UserContext";
+import { getInitials } from "@/lib/common";
 
 export function DashboardHeader() {
+  const {user, isLoading} = useCurrentUser();
   const logout = async () => {
     try {
       const res = await fetch(
@@ -63,11 +66,11 @@ export function DashboardHeader() {
               <Avatar className="size-7">
                 <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
                 <AvatarFallback className="bg-primary/20 text-primary text-xs">
-                  JD
+                  {user?.full_name ? getInitials(user?.full_name) : "Johnson Doe"}
                 </AvatarFallback>
               </Avatar>
               <span className="hidden text-sm font-medium md:inline-block">
-                John Doe
+                {user?.full_name}
               </span>
               <ChevronDown className="size-4 text-muted-foreground" />
             </Button>

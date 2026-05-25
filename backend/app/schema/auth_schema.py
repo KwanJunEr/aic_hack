@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-
+from datetime import datetime
 
 class UserRegisterSchema(BaseModel):
     email: EmailStr
@@ -38,4 +38,4 @@ class UserResponseSchema(BaseModel):
     territory: Optional[str]
 
     is_active: bool
-    created_at: str
+    created_at: Optional[datetime] = None

@@ -4,6 +4,9 @@ from app.core.security import(
     verify_password
 )
 from app.core.auth import create_access_token
+from jose import JWTError, jwt
+from app.db import client
+from app.schema.auth_schema import UserResponseSchema
 
 class AuthService:
 
@@ -48,4 +51,6 @@ class AuthService:
         })
 
         return token
+    
+
 

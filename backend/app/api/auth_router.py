@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, Depends
 from app.schema.auth_schema import (
     UserRegisterSchema, 
-    UserLoginSchema
+    UserLoginSchema,
+    UserResponseSchema
 )
 from app.services.auth_service import AuthService
+from app.core.security import get_current_user
 
 router = APIRouter(
     prefix="/auth",
@@ -60,3 +62,12 @@ async def logout_user(response: Response):
     )
 
     return {"message": "Logged out successfully"}
+
+@router.get(
+    "/me", 
+    response_model=UserResponseSchema
+)
+async def get_me(
+    current_user: UserResponseSchema = Depends(get_current_user)
+):
+    return current_user

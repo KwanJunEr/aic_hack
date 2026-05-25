@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, ChevronRight, Package, Users, Building2, TrendingUp } from "lucide-react";
+import { Home, ChevronRight, Package, Users, Building2, TrendingUp, FileText,ScrollText, Cpu, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useCurrentUser } from "@/context/UserContext";
+import { getInitials } from "@/lib/common";
 
 const ReqtifyLogo = () => (
   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-rose-100 to-violet-100 border border-rose-200/60 shrink-0">
@@ -39,6 +41,21 @@ const ReqtifyLogo = () => (
 
 const mainNavItems = [
   { title: "Dashboard", icon: Home, href: "/dashboard" },
+   {
+    title: "Client Brief",
+    icon: FileText,
+    href: "/client-brief",
+  },
+  {
+    title: "Component Build",
+    icon: Cpu,
+    href: "/component",
+  },
+  {
+    title: "Proposal",
+    icon: ScrollText,
+    href: "/proposal",
+  },
 ];
 
 const secondaryNavItems = [
@@ -48,10 +65,20 @@ const secondaryNavItems = [
   { title: "Past Sales", icon: TrendingUp, href: "/resources/past-sales" },
 ];
 
+const controlGroup = [
+    {
+        title: "Observability",
+        icon: Settings, 
+        href: "/observability",
+    }
+]
+
 export function AppSidebar() {
   const pathName = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const {user, isLoading} = useCurrentUser();
+
 
   return (
     <Sidebar collapsible="icon">
@@ -123,7 +150,35 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+         <Separator className="mx-3 w-auto bg-sidebar-border" />
+
+          <SidebarGroup>
+          <SidebarGroupLabel>Control</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {controlGroup.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathName === item.href}
+                    tooltip={item.title}
+                    className="hover:bg-primary/10 hover:text-primary data-[active=true]:bg-primary/15 data-[active=true]:text-primary"
+                  >
+                    <Link href={item.href}>
+                      <item.icon className="size-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
       </SidebarContent>
+
+
 
       <SidebarFooter className="border-t border-sidebar-border">
         <SidebarMenu>
@@ -132,14 +187,14 @@ export function AppSidebar() {
               <Avatar className="size-8">
                 <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
                 <AvatarFallback className="bg-primary/20 text-primary text-xs">
-                  JD
+                  {user?.full_name ? getInitials(user.full_name): "JD"}
                 </AvatarFallback>
               </Avatar>
               {!isCollapsed && (
                 <>
                   <div className="flex flex-1 flex-col gap-0.5 leading-none">
-                    <span className="font-medium text-sm">John Doe</span>
-                    <span className="text-xs text-muted-foreground">john@acme.com</span>
+                    <span className="font-medium text-sm">{user?.full_name}</span>
+                    <span className="text-xs text-muted-foreground">{user?.email}</span>
                   </div>
                   <ChevronRight className="size-4 text-muted-foreground" />
                 </>
