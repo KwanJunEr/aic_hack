@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+
 export default function SignInPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -66,15 +67,16 @@ export default function SignInPage() {
 
       {/* Back button */}
       <div className="relative z-10 p-6">
+        <Link href={"/"}>
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => router.replace("/")}
           className="group flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           Back
         </Button>
+        </Link>
       </div>
 
       {/* Main content */}

@@ -113,15 +113,16 @@ export default function SignUpPage() {
 
       {/* Back button */}
       <div className="relative z-10 p-6">
+        <Link href={"/"}>
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => (currentStep > 1 ? setCurrentStep(currentStep - 1) : router.replace("/"))}
           className="group flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           {currentStep > 1 ? "Previous step" : "Back"}
         </Button>
+        </Link>
       </div>
 
       {/* Main content */}
