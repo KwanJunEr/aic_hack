@@ -47,8 +47,5 @@ class AuthService:
             "email": user["email"]
         })
 
-        return {
-            "access_token": token,
-            "token_type": "bearer"
-        }
+        return token
 

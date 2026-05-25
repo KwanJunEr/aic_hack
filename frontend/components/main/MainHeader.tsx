@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { Bell, Search, ChevronDown } from "lucide-react"
+import { Bell, Search, ChevronDown } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +14,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 export function DashboardHeader() {
+  const logout = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
+      if (res.ok) {
+        window.location.href = "/sign-in";
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b border-border bg-background px-4">
       <SidebarTrigger className="-ml-1" />
@@ -50,7 +66,9 @@ export function DashboardHeader() {
                   JD
                 </AvatarFallback>
               </Avatar>
-              <span className="hidden text-sm font-medium md:inline-block">John Doe</span>
+              <span className="hidden text-sm font-medium md:inline-block">
+                John Doe
+              </span>
               <ChevronDown className="size-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -61,12 +79,15 @@ export function DashboardHeader() {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Team</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={() => logout()}
+            >
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
     </header>
-  )
+  );
 }

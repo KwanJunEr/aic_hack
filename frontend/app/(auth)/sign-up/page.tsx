@@ -71,10 +71,22 @@ export default function SignUpPage() {
       return
     }
     setIsLoading(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsLoading(false)
-    // Handle sign up logic here
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.detail ?? "Registration failed")
+      }
+      router.push("/sign-in")
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Registration failed")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const canProceed = () => {

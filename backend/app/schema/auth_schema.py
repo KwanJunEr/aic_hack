@@ -12,6 +12,7 @@ class UserRegisterSchema(BaseModel):
     position: str
 
     department: Optional[str] = "Sales"
+    employee_id: Optional[str] = None
     region: Optional[str] = None
     territory: Optional[str] = None
 

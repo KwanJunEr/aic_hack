@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from app.schema.auth_schema import (
     UserRegisterSchema, 
     UserLoginSchema
@@ -28,15 +28,35 @@ async def register_user(
 
 @router.post("/login")
 async def login_user(
-    payload: UserLoginSchema
+    payload: UserLoginSchema,
+    response: Response
 ):
     try:
-        return await service.login(
-            payload.dict()
+        token = await service.login(payload.dict())
+
+        response.set_cookie(
+            key="access_token",
+            value=token, 
+            httponly=True, 
+            secure=False, 
+            samesite="lax",
+            max_age=60 * 60 * 24  # 1 day
         )
+
+        return {"message": "Login Successful!"}
     
     except Exception as e:
         raise HTTPException(
             status_code=400, 
             detail=str(e)
         )
+
+@router.post("/logout")
+async def logout_user(response: Response):
+    response.delete_cookie(
+        key="access_token",
+        httponly=True, 
+        samesite="lax"
+    )
+
+    return {"message": "Logged out successfully"}
