@@ -59,7 +59,7 @@ const mainNavItems = [
 ];
 
 const secondaryNavItems = [
-  { title: "Products", icon: Package, href: "/resources/products" },
+  { title: "Products", icon: Package, href: "/catalog" },
   { title: "Team", icon: Users, href: "/resources/team" },
   { title: "Company Resources", icon: Building2, href: "/resources/company" },
   { title: "Past Sales", icon: TrendingUp, href: "/resources/past-sales" },
