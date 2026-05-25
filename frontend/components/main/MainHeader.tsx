@@ -20,7 +20,7 @@ export function DashboardHeader() {
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b border-border bg-background px-4">
       <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="h-6" />
+      <Separator orientation="vertical" className="h-8 my-3" />
 
       <div className="flex flex-1 items-center gap-4">
         <div className="relative max-w-md flex-1">
