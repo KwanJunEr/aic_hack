@@ -6,6 +6,7 @@ import { extractTextFromFile } from "@/lib/extractText"
 import { AiTimeline } from "@/components/consultation/new/AITimeline"
 import { ExtractedResults } from "@/components/consultation/new/ExtractedResults"
 import { DealReadinessCard } from "@/components/consultation/new/DealReadinessCard"
+import { ChainOfThoughtsCard } from "@/components/consultation/new/ChainOfThoughtsCard"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
@@ -63,7 +64,7 @@ export default function NewConsultationPage() {
             </div>
             {stage === "results" && (
               <Link
-                href="/new/step-2"
+                href="/consult/1/build"
                 className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white brand-gradient shadow-lg shadow-rose-500/25 hover:opacity-90 transition-opacity"
               >
                 Next: Step 2
@@ -89,10 +90,11 @@ export default function NewConsultationPage() {
         {stage === "processing" && <AiTimeline />}
 
         {stage === "results" && (
-          <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+          <div className="grid gap-6 lg:grid-cols-[1fr_480px]">
             <ExtractedResults />
-            <div className="lg:sticky lg:top-8 lg:self-start">
+            <div className="flex flex-col gap-6">
               <DealReadinessCard />
+              <ChainOfThoughtsCard />
             </div>
           </div>
         )}
