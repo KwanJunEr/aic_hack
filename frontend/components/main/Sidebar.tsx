@@ -42,14 +42,9 @@ const ReqtifyLogo = () => (
 const mainNavItems = [
   { title: "Dashboard", icon: Home, href: "/dashboard" },
    {
-    title: "Client Brief",
-    icon: FileText,
-    href: "/client-brief",
-  },
-  {
-    title: "Component Build",
-    icon: Cpu,
-    href: "/component",
+    title: "Consult",
+    icon: Building2,
+    href: "/consult",
   },
   {
     title: "Proposal",
