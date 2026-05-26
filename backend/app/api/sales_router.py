@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Query
-from typing import Optional
+from fastapi import APIRouter, HTTPException
 
 from app.services.sales_service import (
-    get_all_cases, 
+    get_all_cases,
     get_case_by_id
 )
 
@@ -16,6 +15,9 @@ def list_cases():
 
 @router.get("/id/{case_id}")
 def case_by_id(case_id: str):
-    return get_case_by_id(case_id)
+    case = get_case_by_id(case_id)
+    if case is None:
+        raise HTTPException(status_code=404, detail=f"Case '{case_id}' not found")
+    return case
 
 
