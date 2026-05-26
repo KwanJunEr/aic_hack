@@ -1,4 +1,4 @@
-{
+EMPLOYEE_SEED = {
   "last_updated": "2026-05-26T08:00:00+08:00",
   "summary": {
     "total_employees": 14,
