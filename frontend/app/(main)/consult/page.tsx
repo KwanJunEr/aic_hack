@@ -1,9 +1,15 @@
-import React from 'react'
+import { StatsCards } from "@/components/consultation/StatsCard"
+import { ConsultationCards } from "@/components/consultation/ConsultationCard"
+import { PageHeader } from "@/components/consultation/PageHeader"
 
-const Consult = () => {
+export default function Consult() {
   return (
-    <div>Consult</div>
+    <main className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-2">
+        <PageHeader />
+        <StatsCards />
+        <ConsultationCards />
+      </div>
+    </main>
   )
 }
-
-export default Consult
