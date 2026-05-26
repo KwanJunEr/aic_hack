@@ -60,9 +60,9 @@ const mainNavItems = [
 
 const secondaryNavItems = [
   { title: "Products", icon: Package, href: "/catalog" },
-  { title: "Team", icon: Users, href: "/resources/team" },
-  { title: "Company Resources", icon: Building2, href: "/resources/company" },
-  { title: "Past Sales", icon: TrendingUp, href: "/resources/past-sales" },
+  { title: "Team", icon: Users, href: "/team" },
+
+  { title: "Past Sales", icon: TrendingUp, href: "/past-sales" },
 ];
 
 const controlGroup = [
