@@ -8,6 +8,6 @@ class ProductSeedLoader:
     @staticmethod
     def get_product_by_id(product_id:str):
         return next(
-            (p for p in PRODUCT_SEED if p["_id"]["$oid"] == product_id),
+            (p for p in PRODUCT_SEED if p["id"] == product_id),
             None  #Dictionary key chaining
         )

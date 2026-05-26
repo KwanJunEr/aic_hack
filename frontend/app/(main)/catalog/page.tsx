@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
+import { SolutionList } from "@/components/catalog/SolutionListing";
+import type { Product } from "@/types/product";
 
 const Catalog = () => {
-  const [catalog, setCatalog] = useState([]);
+  const [catalog, setCatalog] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,20 +15,18 @@ const Catalog = () => {
         setError(null);
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/products`,
-         
+          `${process.env.NEXT_PUBLIC_API_URL}/products/`
         );
 
         if (!res.ok) {
           throw new Error("Failed to fetch products");
         }
 
-        const data = await res.json();
+        const data: Product[] = await res.json();
         setCatalog(data);
-
-      } catch (error) {
-        console.error("Fetch error:", error);
-     
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err instanceof Error ? err.message : "Failed to load catalog");
       } finally {
         setLoading(false);
       }
@@ -50,16 +49,11 @@ const Catalog = () => {
 
         <hr className="px-2 h-5 mb-4" />
 
-        {/* Loading */}
         {loading && <p className="text-gray-500">Loading catalog...</p>}
 
-        {/* Error */}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* Pass data to child component */}
-        {/* {!loading && !error && (
-        //   <SolutionsList solutions={catalog} />
-        )} */}
+        {!loading && !error && <SolutionList solutions={catalog} />}
       </div>
     </main>
   );

@@ -69,7 +69,8 @@ export const UserProvider = ({
             }
         }
         fetchUser()
-    },[router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
 
     return(
          <UserContext.Provider

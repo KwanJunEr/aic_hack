@@ -3,9 +3,7 @@ from sqlalchemy import false, true
 
 PRODUCT_SEED = [
   {
-    "_id": {
-      "$oid": "665a1f0000000000000001a1"
-    },
+    "id": "665a1f0000000000000001a1",
     "productCode": "NEXUS-WMS",
     "productName": "Nexus WMS \u2014 Warehouse Management System",
     "category": "warehouse_management",
@@ -237,9 +235,7 @@ PRODUCT_SEED = [
     ]
   },
   {
-    "_id": {
-      "$oid": "665a1f0000000000000002b2"
-    },
+    "id":  "665a1f0000000000000002b2",
     "productCode": "NEXUS-TMS",
     "productName": "Nexus TMS \u2014 Transportation Management System",
     "category": "transportation_management",
@@ -465,9 +461,7 @@ PRODUCT_SEED = [
     ]
   },
   {
-    "_id": {
-      "$oid": "665a1f0000000000000003c3"
-    },
+    "id": "665a1f0000000000000003c3",
     "productCode": "NEXUS-OMS",
     "productName": "Nexus OMS \u2014 Order Management System",
     "category": "order_management",
