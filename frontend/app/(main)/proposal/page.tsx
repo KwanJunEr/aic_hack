@@ -16,7 +16,7 @@ const proposalDetails = [
     color: "bg-emerald-500/10",
     iconColor: "text-emerald-500",
     label: "Total Value",
-    value: "RM 436,500 / year",
+    value: "RM 244,800 / year",
   },
   {
     icon: Calendar,
@@ -35,9 +35,10 @@ const proposalDetails = [
 ]
 
 const modules = [
-  { code: "WMS-CORE", name: "Core Warehouse Management", price: "RM 180,000" },
-  { code: "WMS-YARD", name: "Yard Management", price: "RM 95,000" },
-  { code: "WMS-ANALYTICS", name: "Advanced Analytics", price: "RM 120,000" },
+  { code: "WMS-CORE", name: "Core Warehouse Management", price: "RM 85,000" },
+  { code: "WMS-YARD", name: "Yard Management", price: "RM 48,000" },
+  { code: "WMS-ANALYTICS", name: "Advanced Analytics", price: "RM 42,000" },
+  { code: "WMS-3PL", name: "3PL Multi-tenant", price: "RM 25,000" },
 ]
 
 export default function ProposalCreatedPage() {
@@ -163,7 +164,7 @@ export default function ProposalCreatedPage() {
                 ))}
                 <div className="flex items-center justify-between rounded-xl border border-border px-4 py-3 mt-2">
                   <span className="text-sm font-semibold text-foreground">Total Investment</span>
-                  <span className="text-base font-bold text-foreground">RM 436,500 / yr</span>
+                  <span className="text-base font-bold text-foreground">RM 244,800 / yr</span>
                 </div>
               </div>
             </div>

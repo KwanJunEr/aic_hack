@@ -73,10 +73,10 @@ export function ProposalDocument() {
               <h4 className="text-sm font-semibold text-foreground mb-2">3. Pricing Summary</h4>
               <div className="space-y-2">
                 {[
-                  { item: "Software License (Annual)", amount: "RM 395,000" },
-                  { item: "Implementation Services", amount: "RM 65,000" },
-                  { item: "Training & Onboarding", amount: "RM 25,000" },
-                  { item: "Enterprise Discount (10%)", amount: "-RM 48,500", isDiscount: true },
+                  { item: "Software License (Annual)", amount: "RM 200,000" },
+                  { item: "Implementation Services", amount: "RM 50,000" },
+                  { item: "Training & Onboarding", amount: "RM 22,000" },
+                  { item: "Enterprise Discount (10%)", amount: "-RM 27,200", isDiscount: true },
                 ].map((line, i) => (
                   <div key={i} className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{line.item}</span>
@@ -87,7 +87,7 @@ export function ProposalDocument() {
                 ))}
                 <div className="pt-2 mt-2 border-t border-border flex items-center justify-between">
                   <span className="font-semibold text-foreground">Total Investment</span>
-                  <span className="text-lg font-bold text-foreground">RM 436,500</span>
+                  <span className="text-lg font-bold text-foreground">RM 244,800</span>
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@ export function ProposalDocument() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Total Value</p>
-                <p className="text-sm font-medium text-foreground">RM 436,500 / year</p>
+                <p className="text-sm font-medium text-foreground">RM 244,800 / year</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

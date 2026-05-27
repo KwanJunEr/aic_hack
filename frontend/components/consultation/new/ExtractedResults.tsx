@@ -18,6 +18,7 @@ import {
   Check,
   Pencil,
   X,
+  ShieldAlert,
 } from "lucide-react"
 
 const extractedData = [
@@ -25,9 +26,9 @@ const extractedData = [
     id: "budget",
     icon: DollarSign,
     label: "Budget",
-    value: "RM50,000",
-    confidence: 92,
-    source: "Client mentioned budget around fifty thousand during discussion at 12:43",
+    value: "RM 220,000",
+    confidence: 82,
+    source: "Client mentioned hoping to keep it under RM 220K to start, may have gone up due to new Johor site opening",
     color: "emerald",
   },
   {
@@ -163,6 +164,53 @@ export function ExtractedResults() {
               </div>
             )
           })}
+        </CardContent>
+      </Card>
+
+      {/* Budget Validator Panel */}
+      <Card className="border-0 bg-white/70 backdrop-blur-md shadow-xl shadow-amber-100/20">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                <ShieldAlert className="h-4 w-4 text-amber-600" />
+              </div>
+              Budget Validator
+            </CardTitle>
+            <Badge className="bg-amber-100 text-amber-700 border border-amber-200 text-xs font-semibold">
+              MEDIUM RISK
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
+            <p className="text-sm font-semibold text-amber-700 mb-1">Budget Slightly Below Estimated Range</p>
+            <p className="text-xs text-amber-600/80">
+              The stated budget is close but may fall short of the full solution cost. Client indicated flexibility — worth confirming approval headroom before finalising the proposal.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between rounded-lg bg-white/80 border border-border p-3">
+              <span className="text-sm text-muted-foreground">Client stated budget</span>
+              <span className="font-semibold text-foreground">RM 220,000</span>
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-white/80 border border-amber-200 p-3">
+              <span className="text-sm text-muted-foreground">Estimated solution cost</span>
+              <span className="font-semibold text-amber-600">RM 195,000 – RM 250,000 / yr</span>
+            </div>
+            <div className="flex items-center justify-between rounded-lg bg-amber-50 border border-amber-300 p-3">
+              <span className="text-sm font-medium text-amber-700">Potential gap</span>
+              <span className="font-bold text-amber-700">~ RM 30,000</span>
+            </div>
+          </div>
+
+          <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-blue-700">
+              Client hinted budget may increase due to the new Johor site. Confirm final CFO sign-off and consider a phased rollout option as a fallback.
+            </p>
+          </div>
         </CardContent>
       </Card>
 

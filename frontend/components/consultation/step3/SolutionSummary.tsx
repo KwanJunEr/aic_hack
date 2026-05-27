@@ -55,7 +55,7 @@ export function SolutionSummary({ onGenerate }: SolutionSummaryProps) {
             </div>
             <span className="text-sm font-medium text-muted-foreground">Est. Value</span>
           </div>
-          <p className="text-lg font-semibold text-foreground">RM 436,500</p>
+          <p className="text-lg font-semibold text-foreground">RM 244,800</p>
           <p className="text-sm text-muted-foreground mt-1">Annual contract</p>
         </div>
       </div>
@@ -70,10 +70,10 @@ export function SolutionSummary({ onGenerate }: SolutionSummaryProps) {
             <h4 className="text-sm font-medium text-muted-foreground mb-3">Selected Modules</h4>
             <div className="space-y-2">
               {[
-                { code: "WMS-CORE", name: "Core Warehouse Management", price: "RM 180,000" },
-                { code: "WMS-YARD", name: "Yard Management", price: "RM 95,000" },
-                { code: "WMS-ANALYTICS", name: "Advanced Analytics", price: "RM 120,000" },
-                { code: "WMS-3PL", name: "3PL Multi-tenant", price: "RM 90,000" },
+                { code: "WMS-CORE", name: "Core Warehouse Management", price: "RM 85,000" },
+                { code: "WMS-YARD", name: "Yard Management", price: "RM 48,000" },
+                { code: "WMS-ANALYTICS", name: "Advanced Analytics", price: "RM 42,000" },
+                { code: "WMS-3PL", name: "3PL Multi-tenant", price: "RM 25,000" },
               ].map((module) => (
                 <div
                   key={module.code}

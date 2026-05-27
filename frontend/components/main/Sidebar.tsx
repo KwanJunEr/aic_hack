@@ -57,7 +57,7 @@ const secondaryNavItems = [
   { title: "Products", icon: Package, href: "/catalog" },
   { title: "Team", icon: Users, href: "/team" },
 
-  { title: "Past Sales", icon: TrendingUp, href: "/past-sales" },
+  { title: "Past Sales", icon: TrendingUp, href: "/past_sales" },
 ];
 
 const controlGroup = [
