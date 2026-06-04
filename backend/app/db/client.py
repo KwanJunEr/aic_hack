@@ -14,3 +14,4 @@ db = client[DB_NAME]
 
 # collections
 users_collection = db["users"]
+files_collection= db["files"]

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { UploadPanel } from "@/components/consultation/new/UploadPanel"
-import { extractTextFromFile } from "@/lib/extractText"
+import { useFileExtraction, type ExtractionSession } from "@/lib/extractText"
 import { AiTimeline } from "@/components/consultation/new/AITimeline"
 import { ExtractedResults } from "@/components/consultation/new/ExtractedResults"
 import { DealReadinessCard } from "@/components/consultation/new/DealReadinessCard"
@@ -12,19 +12,33 @@ import Link from "next/link"
 
 export default function NewConsultationPage() {
   const [stage, setStage] = useState<"input" | "processing" | "results">("input")
-  const [transcript, setTranscript] = useState("")
+  const [session, setSession] = useState<ExtractionSession | null>(null)
+  const { loading: isExtracting, error: extractError, extract } = useFileExtraction()
 
-  const handleProceed = () => {
-    setStage("processing")
-    // Simulate AI processing
-    setTimeout(() => {
-      setStage("results")
-    }, 5500)
+  // ── Extract button ─────────────────────────────────────────────────────
+  // Runs backend calls: local PDF/DOCX/TXT extraction + Whisper audio
+  // transcription + MongoDB session save. No stage transition here.
+  const handleExtract = async (files: File[], transcript: string) => {
+    const allFiles = [...files]
+    if (transcript.trim()) {
+      const blob = new Blob([transcript.trim()], { type: "text/plain" })
+      allFiles.push(new File([blob], "pasted_transcript.txt", { type: "text/plain" }))
+    }
+    if (allFiles.length === 0) return
+
+    try {
+      const result = await extract(allFiles, files[0]?.name ?? "Consultation")
+      if (result) setSession(result)
+    } catch {
+      // extractError from the hook is surfaced in UploadPanel
+    }
   }
 
-  const handleFileUpload = async (file: File) => {
-    const text = await extractTextFromFile(file)
-    setTranscript(text)
+  // ── Analyze Requirements button ────────────────────────────────────────
+  // Pure UI transition — no backend calls. Extraction must have already run.
+  const handleAnalyze = () => {
+    setStage("processing")
+    setTimeout(() => setStage("results"), 5500)
   }
 
   return (
@@ -64,7 +78,7 @@ export default function NewConsultationPage() {
             </div>
             {stage === "results" && (
               <Link
-                href="/consult/1/build"
+                href={`/consult/${session?.session_id ?? "1"}/build`}
                 className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white brand-gradient shadow-lg shadow-rose-500/25 hover:opacity-90 transition-opacity"
               >
                 Next: Step 2
@@ -80,10 +94,11 @@ export default function NewConsultationPage() {
         {/* Content based on stage */}
         {stage === "input" && (
           <UploadPanel
-            transcript={transcript}
-            setTranscript={setTranscript}
-            onProceed={handleProceed}
-            onFileUpload = {handleFileUpload}
+            onExtract={handleExtract}
+            onAnalyze={handleAnalyze}
+            isExtracting={isExtracting}
+            session={session}
+            extractError={extractError}
           />
         )}
 
