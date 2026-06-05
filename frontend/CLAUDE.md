@@ -1,174 +1,139 @@
 @AGENTS.md
 
-# CLAUDE.md — Autonomous Sales Engineer Frontend
+# CLAUDE.md — Reqtify Frontend
 
 ## Project Overview
 
-**Product**: Autonomous Sales Engineer — AI-powered pre-sales proposal generation system  
-**Stack**: Next.js 14 (App Router) · TypeScript · Tailwind CSS · shadcn/ui  
-**Architecture**: 3-part multi-agent system with MongoDB state persistence and LangSmith tracing  
-**Users**: Technical Sales Consultants (TSC) and senior sales managers
+**Product**: Reqtify — AI Sales Agent Copilot for sales engineers  
+**App title**: "Reqtify" (`app/layout.tsx`)  
+**Stack**: Next.js 16 (App Router) · React 19 · TypeScript 5 · Tailwind CSS v4 · shadcn/ui  
+**Backend**: FastAPI at `NEXT_PUBLIC_API_URL`, cookie-based auth (`credentials: "include"` on all fetches)
 
 ---
 
-## Tech Stack
+## Route Structure
 
 ```
-Next.js 16         App Router, Server Components, Server Actions
-TypeScript          Strict mode enabled
-Tailwind CSS        Utility-first styling, custom design tokens
-shadcn/ui           Component library (New York style)
-```
-
----
-
-
-### Proposal Scoring Types
-
-```typescript
-// types/proposal.ts
-export interface ProposalScore {
-  proposalId: string
-  tier: "premium" | "standard" | "budget"
-  scores: {
-    cost: number        // 0-100 — how well it fits budget
-    fit: number         // 0-100 — how well specs match requirements
-    risk: number        // 0-100 — compatibility and delivery risk (higher = lower risk)
-    confidence: number  // 0-100 — agent confidence in choices
-    margin: number      // 0-100 — estimated profit margin score
-  }
-  totalScore: number
-  recommendation: string  // agent-generated human-readable justification
-  flaggedComponents: FlaggedComponent[]
-}
+app/
+├── (auth)/           # Unauthenticated — no sidebar
+│   ├── sign-in/
+│   └── sign-up/
+└── (main)/           # Authenticated — wraps in UserProvider + SidebarProvider
+    ├── dashboard/
+    ├── catalog/
+    │   └── [id]/
+    ├── team/
+    ├── past_sales/
+    │   └── [id]/
+    ├── proposal/
+    │   └── [id]/
+    └── consult/
+        ├── page.tsx          # Consultation list
+        ├── new/              # Step 0: upload files
+        └── [id]/
+            ├── extraction/   # Step 1: requirements extraction (Stage 1 pipeline)
+            ├── build/        # Step 2: catalog matching (Stage 2)
+            └── proposal-create/  # Step 3: proposal generation (Stage 3)
 ```
 
 ---
 
+## 3-Step Consultation Flow
 
+### Step 0 — Upload (`/consult/new`)
+- `useFileExtraction` hook (`lib/extractText.ts`)
+- PDF/DOCX/TXT extracted **in-browser** (pdfjs-dist, mammoth)
+- Audio (mp3/wav/ogg/flac/m4a/mp4) → POST `/upload/transcribe` (backend Whisper)
+- All results → POST `/upload/sessions` → saved to MongoDB, returns `ExtractionSession` with `session_id`
+- On success, navigates to `/consult/[session_id]/extraction`
 
-### CoT Trace Display
+### Step 1 — Requirements Extraction (`/consult/[id]/extraction`)
+- Calls `runStage1({ transcript_id, user_id })` → POST `/pipeline/stage1/run`
+- Shows `AiTimeline` while processing, tabs when done:
+  - **Extraction & Readiness** — `ExtractedResults` + `DealReadinessCard`
+  - **Sentiment & Urgency** — `SentimentUrgencyCard`
+  - **Objections & Insights** — `ObjectionAnticipatorCard` + `ChainOfThoughtsCard`
+  - **Sales Insights** — `SalesInsightsPanel`
+- HITL review via `ReviewCard` (accept / edit / reject) → `confirmStage1`, `editStage1`, `rejectStage1`
 
-```typescript
-// components/shared/CotTrace.tsx
-"use client"
+### Step 2 — Catalog Matching (`/consult/[id]/build`)
+- Shows `RequirementsSummary` (loaded from `getLatestSession`)
+- Triggers `AiMatchingTimeline` then `ProductRecommendations`
 
-import { useState } from "react"
-import { ChevronDown, Brain } from "lucide-react"
-import { cn } from "@/lib/utils"
+### Step 3 — Proposal (`/consult/[id]/proposal-create`)
+- `ProposalTimeline` → `HumanReview` → `ProposalDocument` + `SolutionSummary`
 
-interface CotTraceProps {
-  agentName: string
-  reasoning: string[]
-  langsmithUrl?: string
-}
+---
 
-export function CotTrace({ agentName, reasoning, langsmithUrl }: CotTraceProps) {
-  const [open, setOpen] = useState(false)
+## Key Files
 
-  return (
-    <div className="border border-border rounded-lg overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-surface-2 hover:bg-surface-3 transition-colors"
-      >
-        <span className="flex items-center gap-2 text-sm font-medium">
-          <Brain className="h-4 w-4 text-brand-accent" />
-          {agentName} — Chain of Thought
-        </span>
-        <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} />
-      </button>
-      {open && (
-        <div className="px-4 py-3 space-y-2 bg-surface-1">
-          {reasoning.map((step, i) => (
-            <div key={i} className="flex gap-3 text-sm">
-              <span className="text-muted-foreground font-mono text-xs mt-0.5">{i + 1}.</span>
-              <p className="font-mono text-xs text-foreground/80 leading-relaxed">{step}</p>
-            </div>
-          ))}
-          {langsmithUrl && (
-            <a
-              href={langsmithUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-brand-accent hover:underline mt-2 inline-block"
-            >
-              View full trace in LangSmith →
-            </a>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
+| File | Purpose |
+|------|---------|
+| `lib/extractText.ts` | `useFileExtraction` hook — full upload/transcription/session flow |
+| `lib/stage1Api.ts` | Typed API client for all Stage 1 endpoints + shared types |
+| `lib/common.ts` | `getInitials(name)` utility |
+| `context/UserContext.tsx` | `UserProvider` + `useCurrentUser()` — fetches `/auth/me`, redirects to `/sign-in` on 401 |
+| `app/(main)/layout.tsx` | Main shell: `UserProvider` > `SidebarProvider` > `AppSidebar` + `DashboardHeader` + `Toaster` |
+| `app/layout.tsx` | Root: Geist fonts, `TooltipProvider` |
+
+---
+
+## Component Map
+
+```
+components/
+├── ui/              shadcn primitives + 3d-globe, meteors, border-beam, background-beams-with-collision
+├── landing/         LandingHeader, hero-section-with-gradient, About, Features, CTA, LandingFooter
+├── main/            AppSidebar, DashboardHeader
+├── catalog/         SolutionCard, SolutionListing
+├── employees/       EmployeeCard, EmployeeFilter
+├── past_sales/      CaseCard, CaseListing
+└── consultation/
+    ├── new/         UploadPanel, AITimeline, ExtractedResults, DealReadinessCard,
+    │                ChainOfThoughtsCard, SentimentUrgencyCard, ObjectionAnticipatorCard,
+    │                ReviewCard, SalesInsightsPanel
+    ├── step2/       RequirementsSummary, AIMatchingTimeline, ProductRecommendations
+    └── step3/       ProposalTimeline, HumanReview, ProposalDocument, SolutionSummary
 ```
 
 ---
 
-## Proposal Comparison Component
+## Dependencies Worth Knowing
 
-```typescript
-// components/part2/ProposalVersionCard.tsx
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { ScoreBreakdown } from "./ScoreBreakdown"
-
-const tierConfig = {
-  premium: { label: "💎 Premium", color: "bg-tier-premium/10 border-tier-premium/30 text-tier-premium" },
-  standard: { label: "✅ Standard", color: "bg-tier-standard/10 border-tier-standard/30 text-tier-standard" },
-  budget: { label: "💰 Budget", color: "bg-tier-budget/10 border-tier-budget/30 text-tier-budget" },
-}
-
-export function ProposalVersionCard({ proposal, score, onSelect }: Props) {
-  const config = tierConfig[proposal.tier]
-
-  return (
-    <Card className={cn("border-2 transition-all cursor-pointer hover:shadow-lg", config.color)}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <Badge variant="outline" className={config.color}>{config.label}</Badge>
-          <span className="font-display text-2xl font-bold">
-            RM {proposal.totalPrice.toLocaleString()}
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Component list */}
-        <div className="space-y-2">
-          {proposal.components.map((component) => (
-            <div key={component.sku} className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{component.name}</span>
-              <span className="font-medium">RM {component.price.toLocaleString()}</span>
-            </div>
-          ))}
-        </div>
-        {/* Score breakdown */}
-        <ScoreBreakdown scores={score.scores} />
-        {/* Agent recommendation */}
-        <p className="text-xs text-muted-foreground italic">{score.recommendation}</p>
-      </CardContent>
-    </Card>
-  )
-}
+```
+next ^16.2.6        App Router, use(params) for async params
+react 19.2.4        Concurrent features
+tailwindcss ^4      New config format (postcss plugin, no tailwind.config.js)
+framer-motion       Page/component animations
+gsap ^3.15.0        Advanced animations
+three + @react-three/fiber + @react-three/drei   3D globe in landing
+recharts ^3.8.0     Charts in proposal/dashboard
+pdfjs-dist ^5       Client-side PDF text extraction (worker at /pdf.worker.min.mjs)
+mammoth ^1.12.0     Client-side DOCX text extraction
+sonner ^2           Toast notifications — use toast.success/error from "sonner"
+next-themes         Dark/light mode
 ```
 
 ---
 
-## Key Rules
+## Env Vars
 
-### Do
-- Use Server Components for all data fetching
-- Use Server Actions for all mutations
-- Keep `"use client"` at leaf components only
-- Always show loading skeletons during agent processing
-
-
-
-- Color is never the only indicator — always pair with text or icon
+| Variable | Usage |
+|----------|-------|
+| `NEXT_PUBLIC_API_URL` | Backend base URL — all fetches prefix with this |
 
 ---
 
+## Key Conventions
 
+- All `(main)` pages use `"use client"` — the layout itself is a client component
+- Async route params use `use(params)` (Next.js 16 pattern), not `await params`
+- All fetch calls include `credentials: "include"` to send auth cookie
+- Toast notifications: `import { toast } from "sonner"` — never use `alert()`
+- `brand-gradient` CSS class for the pink/rose accent gradient used on CTAs and icon backgrounds
+- `useCurrentUser()` from `context/UserContext` to access the authenticated user
+
+---
 
 ## Getting Started
 
@@ -176,10 +141,9 @@ export function ProposalVersionCard({ proposal, score, onSelect }: Props) {
 # Install dependencies
 npm install
 
-# Install shadcn components
-npx shadcn@latest init
-npx shadcn@latest add button card badge dialog sheet progress separator skeleton tabs tooltip popover form input label textarea select alert scroll-area
-
 # Run dev server
 npm run dev
+
+# Lint
+npm run lint
 ```
