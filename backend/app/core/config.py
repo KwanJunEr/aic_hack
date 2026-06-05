@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     mongo_url: str
     db_name: str
     OPENAI_API_KEY: str
-
+    langsmith_key: str | None = None
+    langsmith_tracking: bool = False
     class Config:
        env_file = ".env"
 

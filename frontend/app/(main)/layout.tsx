@@ -5,6 +5,7 @@ import { DashboardHeader } from "@/components/main/MainHeader";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import React from "react";
 import { UserProvider } from "@/context/UserContext";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function MainLayout({
   children,
@@ -21,6 +22,7 @@ export default function MainLayout({
           <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
         </SidebarInset>
       </div>
+      <Toaster />
     </SidebarProvider>
     </UserProvider>
   );

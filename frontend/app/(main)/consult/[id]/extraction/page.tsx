@@ -1,12 +1,22 @@
 "use client"
 
-import { use, useState, useEffect } from "react"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { use, useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
+import { ArrowLeft, ArrowRight, AlertTriangle } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 import { AiTimeline } from "@/components/consultation/new/AITimeline"
 import { ExtractedResults } from "@/components/consultation/new/ExtractedResults"
 import { DealReadinessCard } from "@/components/consultation/new/DealReadinessCard"
 import { ChainOfThoughtsCard } from "@/components/consultation/new/ChainOfThoughtsCard"
+import { useCurrentUser } from "@/context/UserContext"
+import {
+  runStage1,
+  editStage1,
+  rejectStage1,
+  confirmStage1,
+  type Stage1PipelineData,
+} from "@/lib/stage1Api"
 
 export default function ConsultationResultsPage({
   params,
@@ -14,12 +24,112 @@ export default function ConsultationResultsPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = use(params)
-  const [stage, setStage] = useState<"processing" | "results">("processing")
+  const router = useRouter()
+  const { user } = useCurrentUser()
 
+  const [stage, setStage] = useState<"processing" | "results">("processing")
+  const [pipelineData, setPipelineData] = useState<Stage1PipelineData | null>(null)
+  const [pipelineSessionId, setPipelineSessionId] = useState<string | null>(null)
+  const [obstruction, setObstruction] = useState<{ detected: boolean; reason: string | null }>({
+    detected: false,
+    reason: null,
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Fire pipeline on mount once user is resolved — do NOT block navigation
   useEffect(() => {
-    const timer = setTimeout(() => setStage("results"), 5500)
-    return () => clearTimeout(timer)
-  }, [])
+    if (!user?.id) return
+    let cancelled = false
+
+    const run = async () => {
+      try {
+        const response = await runStage1({ transcript_id: id, user_id: user.id })
+        if (cancelled) return
+        setPipelineData(response.data ?? null)
+        setPipelineSessionId(response.session_id)
+        setObstruction({
+          detected: response.obstruction_detected ?? false,
+          reason: response.obstruction_reason ?? null,
+        })
+        setStage("results")
+        toast.success("AI confirmed successfully")
+      } catch (err) {
+        if (cancelled) return
+        console.error("[stage1] pipeline error:", err)
+        setStage("results") // show fallback UI, never leave user on blank screen
+        toast.error("There is an error in AI processing")
+      }
+    }
+
+    run()
+    return () => {
+      cancelled = true
+    }
+  }, [id, user?.id])
+
+  const handleAccept = useCallback(async () => {
+    if (!pipelineSessionId) return
+    setIsSubmitting(true)
+    try {
+      await confirmStage1({ session_id: pipelineSessionId })
+      toast.success("AI confirmed successfully")
+      router.push(`/consult/${id}/build`)
+    } catch {
+      toast.error("There is an error in AI processing")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [pipelineSessionId, id, router])
+
+  const handleEdit = useCallback(
+    async (additionalText: string) => {
+      if (!pipelineSessionId) return
+      setIsSubmitting(true)
+      setStage("processing")
+      try {
+        const response = await editStage1({
+          session_id: pipelineSessionId,
+          additional_text: additionalText,
+        })
+        setPipelineData(response.data ?? null)
+        setPipelineSessionId(response.session_id)
+        setObstruction({
+          detected: response.obstruction_detected ?? false,
+          reason: response.obstruction_reason ?? null,
+        })
+        setStage("results")
+        toast.success("AI confirmed successfully")
+      } catch {
+        setStage("results")
+        toast.error("There is an error in AI processing")
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [pipelineSessionId],
+  )
+
+  const handleReject = useCallback(async () => {
+    if (!pipelineSessionId) return
+    setIsSubmitting(true)
+    setStage("processing")
+    try {
+      const response = await rejectStage1({ session_id: pipelineSessionId })
+      setPipelineData(response.data ?? null)
+      setPipelineSessionId(response.session_id)
+      setObstruction({
+        detected: response.obstruction_detected ?? false,
+        reason: response.obstruction_reason ?? null,
+      })
+      setStage("results")
+      toast.success("AI confirmed successfully")
+    } catch {
+      setStage("results")
+      toast.error("There is an error in AI processing")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [pipelineSessionId])
 
   return (
     <main className="min-h-screen bg-background">
@@ -73,14 +183,30 @@ export default function ConsultationResultsPage({
           </p>
         </div>
 
+        {obstruction.detected && stage === "results" && (
+          <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 p-4 flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-800">Obstruction Detected</p>
+              <p className="text-sm text-amber-700 mt-0.5">{obstruction.reason}</p>
+            </div>
+          </div>
+        )}
+
         {stage === "processing" && <AiTimeline />}
 
         {stage === "results" && (
           <div className="grid gap-6 lg:grid-cols-[1fr_480px]">
-            <ExtractedResults />
+            <ExtractedResults
+              data={pipelineData}
+              onAccept={handleAccept}
+              onEdit={handleEdit}
+              onReject={handleReject}
+              isSubmitting={isSubmitting}
+            />
             <div className="flex flex-col gap-6">
-              <DealReadinessCard />
-              <ChainOfThoughtsCard />
+              <DealReadinessCard data={pipelineData} />
+              <ChainOfThoughtsCard data={pipelineData} />
             </div>
           </div>
         )}
