@@ -1,51 +1,81 @@
 "use client"
 
-import { ArrowLeft, CheckCircle2, Download, Send, FileText, Building2, Banknote, Calendar, Clock, ExternalLink } from "lucide-react"
+import { useState, useEffect } from "react"
+import {
+  ArrowLeft,
+  FileText,
+  Download,
+  Eye,
+  X,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  Archive,
+  Sparkles,
+} from "lucide-react"
 import Link from "next/link"
 
-const proposalDetails = [
+interface ProposalEntry {
+  id: string
+  title: string
+  subtitle: string
+  file: string
+  createdLabel: string
+  isCurrentTime: boolean
+  badge: string
+  badgeColor: string
+  badgeDot: string
+  description: string
+}
+
+const PROPOSALS: ProposalEntry[] = [
   {
-    icon: Building2,
-    color: "bg-blue-500/10",
-    iconColor: "text-blue-500",
-    label: "Client",
-    value: "Acme Logistics Corp",
+    id: "previous",
+    title: "Technical Proposal — Nexus WMS",
+    subtitle: "PROP-2024-00847 · Acme Logistics Corp",
+    file: "/nexus-wms-proposal_previous.pdf",
+    createdLabel: "5 Jun 2026, 14:32",
+    isCurrentTime: false,
+    badge: "Previous",
+    badgeColor: "bg-muted text-muted-foreground border border-border",
+    badgeDot: "bg-muted-foreground/50",
+    description: "Initial proposal draft generated from Stage 2 catalog matching session.",
   },
   {
-    icon: Banknote,
-    color: "bg-emerald-500/10",
-    iconColor: "text-emerald-500",
-    label: "Total Value",
-    value: "RM 244,800 / year",
-  },
-  {
-    icon: Calendar,
-    color: "bg-violet-500/10",
-    iconColor: "text-violet-500",
-    label: "Valid Until",
-    value: "March 15, 2025",
-  },
-  {
-    icon: Clock,
-    color: "bg-amber-500/10",
-    iconColor: "text-amber-500",
-    label: "Implementation",
-    value: "12–16 weeks",
+    id: "latest",
+    title: "Technical Proposal — Nexus WMS (v2)",
+    subtitle: "PROP-2024-00847 · Acme Logistics Corp · Updated",
+    file: "/nexus-wms-proposal_latest.pdf",
+    createdLabel: "",
+    isCurrentTime: true,
+    badge: "Latest",
+    badgeColor: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+    badgeDot: "bg-emerald-500",
+    description: "Revised proposal with updated pricing, competitor analysis, and 3-tab financial breakdown.",
   },
 ]
 
-const modules = [
-  { code: "WMS-CORE", name: "Core Warehouse Management", price: "RM 85,000" },
-  { code: "WMS-YARD", name: "Yard Management", price: "RM 48,000" },
-  { code: "WMS-ANALYTICS", name: "Advanced Analytics", price: "RM 42,000" },
-  { code: "WMS-3PL", name: "3PL Multi-tenant", price: "RM 25,000" },
-]
+export default function ProposalListPage() {
+  const [preview, setPreview] = useState<ProposalEntry | null>(null)
+  const [currentTime, setCurrentTime] = useState("6 Jun 2026")
 
-export default function ProposalCreatedPage() {
+  useEffect(() => {
+    const now = new Date()
+    setCurrentTime(
+      now.toLocaleString("en-MY", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+    )
+  }, [])
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-2">
-        {/* Back */}
         <Link
           href="/consult"
           className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -54,189 +84,168 @@ export default function ProposalCreatedPage() {
           Back to Consultations
         </Link>
 
-        {/* Header */}
+        {/* Page header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl brand-gradient">
-              <CheckCircle2 className="h-5 w-5 text-white" />
+              <FileText className="h-5 w-5 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-                Proposal Created
+                Proposal Documents
               </h1>
-              <p className="text-sm text-muted-foreground">PROP-2024-00847 · Generated just now</p>
-            </div>
-          </div>
-          <p className="text-muted-foreground max-w-2xl">
-            Your AI-generated proposal for Acme Logistics Corp has been compiled and is ready for review, editing, or delivery to the client.
-          </p>
-        </div>
-
-        {/* Success Banner */}
-        <div className="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50/60 backdrop-blur-sm p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500 shadow-lg shadow-emerald-500/30 shrink-0">
-              <CheckCircle2 className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <p className="font-semibold text-emerald-800">Proposal Successfully Generated</p>
-              <p className="text-sm text-emerald-700 mt-0.5">
-                All 5 sections compiled · Pricing validated · Compliance verified
+              <p className="text-sm text-muted-foreground">
+                Acme Logistics Corp &nbsp;·&nbsp; PROP-2024-00847
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button className="inline-flex items-center gap-2 rounded-lg border border-emerald-300 bg-white px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 transition-colors">
-              <Download className="h-4 w-4" />
-              Export PDF
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-emerald-500/25 hover:bg-emerald-600 transition-colors">
-              <Send className="h-4 w-4" />
-              Send to Client
-            </button>
-          </div>
+          <p className="text-muted-foreground max-w-2xl">
+            AI-generated proposal documents for review, preview, and download. The latest version includes competitor comparison and financial analysis.
+          </p>
         </div>
 
-        {/* Main content grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left: Proposal preview card */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Document card */}
-            <div className="glass-card rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl brand-gradient">
-                    <FileText className="h-6 w-6 text-white" />
+        {/* Cards */}
+        <div className="grid gap-6 sm:grid-cols-2 max-w-4xl">
+          {PROPOSALS.map((p) => {
+            const createdAt = p.isCurrentTime ? currentTime : p.createdLabel
+            return (
+              <div
+                key={p.id}
+                className="glass-card rounded-2xl p-6 flex flex-col gap-5"
+              >
+                {/* Card header */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl brand-gradient shrink-0">
+                      <FileText className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-semibold text-foreground leading-tight">
+                        {p.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                        {p.subtitle}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Technical Proposal</h3>
-                    <p className="text-sm text-muted-foreground">Nexus WMS Suite · Acme Logistics Corp</p>
-                  </div>
-                </div>
-                <Link
-                  href="/proposal/1"
-                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  View Full
-                </Link>
-              </div>
-
-              {/* Section index */}
-              <div className="space-y-2">
-                {[
-                  { num: "1", title: "Executive Summary", status: "complete" },
-                  { num: "2", title: "Scope of Work", status: "complete" },
-                  { num: "3", title: "Pricing Summary", status: "complete" },
-                  { num: "4", title: "Terms & Conditions", status: "complete" },
-                  { num: "5", title: "Implementation Timeline", status: "complete" },
-                ].map((section) => (
-                  <div
-                    key={section.num}
-                    className="flex items-center gap-3 rounded-xl bg-muted/40 px-4 py-3"
+                  <span
+                    className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${p.badgeColor}`}
                   >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
-                      {section.num}
-                    </span>
-                    <span className="text-sm font-medium text-foreground flex-1">{section.title}</span>
-                    <span className="text-xs text-emerald-600 font-medium">Complete</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+                    <span className={`h-1.5 w-1.5 rounded-full ${p.badgeDot}`} />
+                    {p.badge}
+                  </span>
+                </div>
 
-            {/* Modules included */}
-            <div className="glass-card rounded-2xl p-6">
-              <h3 className="font-semibold text-foreground mb-4">Modules Included</h3>
-              <div className="space-y-2">
-                {modules.map((m) => (
-                  <div
-                    key={m.code}
-                    className="flex items-center justify-between rounded-xl bg-muted/40 px-4 py-3"
+                {/* Description */}
+                <p className="text-xs text-muted-foreground leading-relaxed -mt-1">
+                  {p.description}
+                </p>
+
+                {/* Meta */}
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    {p.isCurrentTime ? (
+                      <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+                    ) : (
+                      <Archive className="h-3.5 w-3.5" />
+                    )}
+                    {p.badge === "Latest" ? "Current version" : "Archived"}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {createdAt}
+                  </span>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2 pt-1 border-t border-border/40">
+                  <button
+                    onClick={() => setPreview(p)}
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
                   >
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span className="text-xs font-mono text-rose-500">{m.code}</span>
-                      <span className="text-sm text-foreground">{m.name}</span>
-                    </div>
-                    <span className="text-sm font-medium text-foreground">{m.price}</span>
-                  </div>
-                ))}
-                <div className="flex items-center justify-between rounded-xl border border-border px-4 py-3 mt-2">
-                  <span className="text-sm font-semibold text-foreground">Total Investment</span>
-                  <span className="text-base font-bold text-foreground">RM 244,800 / yr</span>
+                    <Eye className="h-4 w-4" />
+                    Preview
+                  </button>
+                  <a
+                    href={p.file}
+                    download
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-white brand-gradient hover:opacity-90 transition-opacity"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download
+                  </a>
                 </div>
               </div>
-            </div>
-          </div>
+            )
+          })}
+        </div>
 
-          {/* Right sidebar */}
-          <div className="space-y-6">
-            {/* Proposal details */}
-            <div className="glass-card rounded-2xl p-5">
-              <h4 className="text-sm font-semibold text-foreground mb-4">Proposal Details</h4>
-              <div className="space-y-4">
-                {proposalDetails.map((item) => (
-                  <div key={item.label} className="flex items-center gap-3">
-                    <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${item.color}`}>
-                      <item.icon className={`h-4 w-4 ${item.iconColor}`} />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">{item.label}</p>
-                      <p className="text-sm font-medium text-foreground">{item.value}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* AI quality */}
-            <div className="glass-card rounded-2xl p-5">
-              <h4 className="text-sm font-semibold text-foreground mb-4">AI Generation Quality</h4>
-              <div className="space-y-3">
-                {[
-                  { label: "Content Accuracy", value: 96 },
-                  { label: "Pricing Validation", value: 100 },
-                  { label: "Compliance Check", value: 94 },
-                ].map((metric) => (
-                  <div key={metric.label}>
-                    <div className="flex items-center justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">{metric.label}</span>
-                      <span className="font-medium text-foreground">{metric.value}%</span>
-                    </div>
-                    <div className="h-2 rounded-full bg-muted overflow-hidden">
-                      <div className="h-full bg-emerald-500 transition-all" style={{ width: `${metric.value}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Next steps */}
-            <div className="glass-card rounded-2xl p-5">
-              <h4 className="text-sm font-semibold text-foreground mb-4">Next Steps</h4>
-              <div className="space-y-3">
-                {[
-                  { step: "1", label: "Review proposal sections", done: true },
-                  { step: "2", label: "Send to client for approval", done: false },
-                  { step: "3", label: "Schedule follow-up call", done: false },
-                ].map((item) => (
-                  <div key={item.step} className="flex items-center gap-3">
-                    <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                      item.done ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
-                    }`}>
-                      {item.done ? <CheckCircle2 className="h-3.5 w-3.5" /> : item.step}
-                    </div>
-                    <span className={`text-sm ${item.done ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Summary row */}
+        <div className="mt-8 max-w-4xl rounded-2xl border border-border/50 bg-muted/30 p-4">
+          <div className="flex items-center gap-6 flex-wrap text-sm text-muted-foreground">
+            <span className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              2 proposals generated
+            </span>
+            <span className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Latest updated {currentTime}
+            </span>
+            <span className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Nexus WMS Core · RM 47,500
+            </span>
           </div>
         </div>
       </div>
+
+      {/* Preview modal */}
+      {preview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={() => setPreview(null)}
+        >
+          <div
+            className="relative w-full max-w-5xl h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-background shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg brand-gradient">
+                  <FileText className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{preview.title}</p>
+                  <p className="text-xs text-muted-foreground">{preview.subtitle}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={preview.file}
+                  download
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Download
+                </a>
+                <button
+                  onClick={() => setPreview(null)}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            {/* PDF embed */}
+            <iframe
+              src={preview.file}
+              className="flex-1 w-full"
+              title={preview.title}
+            />
+          </div>
+        </div>
+      )}
     </main>
   )
 }
