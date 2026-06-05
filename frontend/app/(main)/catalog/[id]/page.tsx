@@ -1,5 +1,8 @@
-import { notFound } from "next/navigation"
+"use client"
+
+import { use, useEffect, useState } from "react"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,7 +20,7 @@ import {
   Plug,
   ExternalLink,
 } from "lucide-react"
-import type { Product, ProductModule} from "@/types/product"
+import type { Product, ProductModule } from "@/types/product"
 
 const deploymentIcons: Record<string, React.ReactNode> = {
   cloud_saas: <Cloud className="h-4 w-4" />,
@@ -99,28 +102,49 @@ function ModuleCard({ module }: { module: ProductModule }) {
   )
 }
 
-async function getProduct(id: string): Promise<Product | null> {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
-      { cache: "no-store" }
-    )
-    if (!res.ok) return null
-    return res.json()
-  } catch {
-    return null
-  }
-}
-
-export default async function SolutionDetailPage({
+export default function SolutionDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = await params
-  const product = await getProduct(id)
+  const { id } = use(params)
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [missing, setMissing] = useState(false)
 
-  if (!product) {
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+          { credentials: "include" }
+        )
+        if (!res.ok) {
+          setMissing(true)
+          return
+        }
+        const data: Product = await res.json()
+        setProduct(data)
+      } catch {
+        setMissing(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProduct()
+  }, [id])
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <p className="text-muted-foreground">Loading product...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (missing || !product) {
     notFound()
   }
 
@@ -140,22 +164,22 @@ export default async function SolutionDetailPage({
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <Badge
               variant="outline"
-              className={`capitalize ${tierColors[product.tier] || "bg-muted"}`}
+              className={`capitalize ${tierColors[product!.tier] || "bg-muted"}`}
             >
-              {product.tier}
+              {product!.tier}
             </Badge>
-            <Badge variant="secondary">{categoryLabels[product.category] || product.category}</Badge>
-            <span className="text-sm text-muted-foreground">v{product.version}</span>
+            <Badge variant="secondary">{categoryLabels[product!.category] || product!.category}</Badge>
+            <span className="text-sm text-muted-foreground">v{product!.version}</span>
           </div>
 
-          <h1 className="text-3xl font-bold tracking-tight mb-2">{product.productName}</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">{product!.productName}</h1>
 
           <div className="flex items-center gap-2 text-muted-foreground mb-4">
             <Building2 className="h-4 w-4" />
-            <span>{product.vendor}</span>
+            <span>{product!.vendor}</span>
           </div>
 
-          <p className="text-muted-foreground max-w-4xl leading-relaxed">{product.description}</p>
+          <p className="text-muted-foreground max-w-4xl leading-relaxed">{product!.description}</p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-3">
@@ -168,7 +192,7 @@ export default async function SolutionDetailPage({
                 Deployment Options
               </h2>
               <div className="flex flex-wrap gap-2">
-                {product.deploymentOptions.map((option) => (
+                {product!.deploymentOptions.map((option) => (
                   <Badge key={option} variant="outline" className="gap-1.5 py-1.5 px-3">
                     {deploymentIcons[option]}
                     <span className="capitalize">{option.replace(/_/g, " ")}</span>
@@ -181,7 +205,7 @@ export default async function SolutionDetailPage({
             <section>
               <h2 className="text-xl font-semibold mb-4">Target Segments</h2>
               <div className="flex flex-wrap gap-2">
-                {product.targetSegment.map((segment) => (
+                {product!.targetSegment.map((segment) => (
                   <Badge key={segment} variant="secondary" className="capitalize">
                     {segment}
                   </Badge>
@@ -198,7 +222,7 @@ export default async function SolutionDetailPage({
                 Available Modules
               </h2>
               <div className="grid gap-4">
-                {product.modules.map((module) => (
+                {product!.modules.map((module) => (
                   <ModuleCard key={module.moduleCode} module={module} />
                 ))}
               </div>
@@ -207,82 +231,82 @@ export default async function SolutionDetailPage({
             <Separator />
 
             {/* Integrations */}
-            {product.integrations && (
-            <section>
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Plug className="h-5 w-5" />
-                Integrations
-              </h2>
-              <div className="grid gap-6 sm:grid-cols-2">
-                {product.integrations.erpConnectors && product.integrations.erpConnectors.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">ERP Connectors</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-1.5">
-                        {product.integrations.erpConnectors.map((erp) => (
-                          <Badge key={erp} variant="outline" className="text-xs">
-                            {erp}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+            {product!.integrations && (
+              <section>
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Plug className="h-5 w-5" />
+                  Integrations
+                </h2>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {product!.integrations.erpConnectors && product!.integrations.erpConnectors.length > 0 && (
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">ERP Connectors</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-1.5">
+                          {product!.integrations.erpConnectors.map((erp) => (
+                            <Badge key={erp} variant="outline" className="text-xs">
+                              {erp}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
-                {product.integrations.tmsConnectors && product.integrations.tmsConnectors.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">TMS Connectors</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-1.5">
-                        {product.integrations.tmsConnectors.map((tms) => (
-                          <Badge key={tms} variant="outline" className="text-xs">
-                            {tms}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                  {product!.integrations.tmsConnectors && product!.integrations.tmsConnectors.length > 0 && (
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">TMS Connectors</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-1.5">
+                          {product!.integrations.tmsConnectors.map((tms) => (
+                            <Badge key={tms} variant="outline" className="text-xs">
+                              {tms}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
-                {product.integrations.marketplaces && product.integrations.marketplaces.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">Marketplaces</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-1.5">
-                        {product.integrations.marketplaces.map((marketplace) => (
-                          <Badge key={marketplace} variant="outline" className="text-xs">
-                            {marketplace}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                  {product!.integrations.marketplaces && product!.integrations.marketplaces.length > 0 && (
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">Marketplaces</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-1.5">
+                          {product!.integrations.marketplaces.map((marketplace) => (
+                            <Badge key={marketplace} variant="outline" className="text-xs">
+                              {marketplace}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
-                {product.integrations.protocols && product.integrations.protocols.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">Protocols</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-1.5">
-                        {product.integrations.protocols.map((protocol) => (
-                          <Badge key={protocol} variant="outline" className="text-xs">
-                            {protocol}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </section>
+                  {product!.integrations.protocols && product!.integrations.protocols.length > 0 && (
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">Protocols</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-1.5">
+                          {product!.integrations.protocols.map((protocol) => (
+                            <Badge key={protocol} variant="outline" className="text-xs">
+                              {protocol}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </section>
             )}
           </div>
 
@@ -299,13 +323,13 @@ export default async function SolutionDetailPage({
                   <p className="text-sm text-muted-foreground mb-1">Base License</p>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold">
-                      {formatCurrency(product.pricing.baseLicense.monthly)}
+                      {formatCurrency(product!.pricing.baseLicense.monthly)}
                     </span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    or {formatCurrency(product.pricing.baseLicense.annual)}/year (save{" "}
-                    {product.pricing.baseLicense.annualDiscountPct}%)
+                    or {formatCurrency(product!.pricing.baseLicense.annual)}/year (save{" "}
+                    {product!.pricing.baseLicense.annualDiscountPct}%)
                   </p>
                 </div>
 
@@ -314,12 +338,12 @@ export default async function SolutionDetailPage({
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Included Users</span>
-                    <span className="font-medium">{product.pricing.baseLicense.includedUsers}</span>
+                    <span className="font-medium">{product!.pricing.baseLicense.includedUsers}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Additional User</span>
                     <span className="font-medium">
-                      {formatCurrency(product.pricing.baseLicense.perAdditionalUser)}/mo
+                      {formatCurrency(product!.pricing.baseLicense.perAdditionalUser)}/mo
                     </span>
                   </div>
                 </div>
@@ -331,15 +355,15 @@ export default async function SolutionDetailPage({
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Standard</span>
-                      <span>{formatCurrency(product.pricing.implementationFee.standard)}</span>
+                      <span>{formatCurrency(product!.pricing.implementationFee.standard)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Enterprise</span>
-                      <span>{formatCurrency(product.pricing.implementationFee.enterprise)}</span>
+                      <span>{formatCurrency(product!.pricing.implementationFee.enterprise)}</span>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    {product.pricing.implementationFee.note}
+                    {product!.pricing.implementationFee.note}
                   </p>
                 </div>
 
@@ -361,19 +385,19 @@ export default async function SolutionDetailPage({
               <CardContent className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Uptime</span>
-                  <span className="font-medium">{product.sla.uptime}</span>
+                  <span className="font-medium">{product!.sla.uptime}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Support Hours</span>
-                  <span className="font-medium">{product.sla.supportHours}</span>
+                  <span className="font-medium">{product!.sla.supportHours}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Critical Response</span>
-                  <span className="font-medium">{product.sla.responseTimeCritical}</span>
+                  <span className="font-medium">{product!.sla.responseTimeCritical}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Standard Response</span>
-                  <span className="font-medium">{product.sla.responseTimeStandard}</span>
+                  <span className="font-medium">{product!.sla.responseTimeStandard}</span>
                 </div>
               </CardContent>
             </Card>
@@ -388,7 +412,7 @@ export default async function SolutionDetailPage({
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {product.compliance.map((cert) => (
+                  {product!.compliance.map((cert) => (
                     <Badge key={cert} variant="outline" className="gap-1">
                       <CheckCircle2 className="h-3 w-3 text-green-500" />
                       {cert}
@@ -405,14 +429,14 @@ export default async function SolutionDetailPage({
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-1.5">
-                  {product.tags.slice(0, 15).map((tag) => (
+                  {product!.tags.slice(0, 15).map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
-                  {product.tags.length > 15 && (
+                  {product!.tags.length > 15 && (
                     <Badge variant="secondary" className="text-xs">
-                      +{product.tags.length - 15} more
+                      +{product!.tags.length - 15} more
                     </Badge>
                   )}
                 </div>

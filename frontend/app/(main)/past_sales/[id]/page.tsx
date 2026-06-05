@@ -1,5 +1,8 @@
-import { notFound } from "next/navigation"
+"use client"
+
+import { use, useEffect, useState } from "react"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -125,32 +128,53 @@ function TeamTable({ members, label }: { members: TeamMember[]; label: string })
   )
 }
 
-async function getCase(id: string): Promise<SalesCase | null> {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/sales/id/${id}`,
-      { cache: "no-store" }
-    )
-    if (!res.ok) return null
-    return res.json()
-  } catch {
-    return null
-  }
-}
-
-export default async function SalesCaseDetailPage({
+export default function SalesCaseDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = await params
-  const salesCase = await getCase(id)
+  const { id } = use(params)
+  const [salesCase, setSalesCase] = useState<SalesCase | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [missing, setMissing] = useState(false)
 
-  if (!salesCase) {
+  useEffect(() => {
+    const fetchCase = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/sales/id/${id}`,
+          { credentials: "include" }
+        )
+        if (!res.ok) {
+          setMissing(true)
+          return
+        }
+        const data: SalesCase = await res.json()
+        setSalesCase(data)
+      } catch {
+        setMissing(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCase()
+  }, [id])
+
+  if (loading) {
+    return (
+      <main className="bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <p className="text-muted-foreground">Loading case...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (missing || !salesCase) {
     notFound()
   }
 
-  const dealValue = salesCase.dealSummary.dealValueMYR
+  const dealValue = salesCase!.dealSummary.dealValueMYR
 
   return (
     <main className="bg-background">
@@ -167,29 +191,29 @@ export default async function SalesCaseDetailPage({
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <Badge
               variant="outline"
-              className={`capitalize ${segmentColors[salesCase.client.segment] ?? "bg-muted"}`}
+              className={`capitalize ${segmentColors[salesCase!.client.segment] ?? "bg-muted"}`}
             >
-              {salesCase.client.segment}
+              {salesCase!.client.segment}
             </Badge>
             <Badge variant="outline" className="gap-1.5">
-              {deploymentIcons[salesCase.dealSummary.deploymentOption]}
+              {deploymentIcons[salesCase!.dealSummary.deploymentOption]}
               <span className="capitalize">
-                {salesCase.dealSummary.deploymentOption.replace(/_/g, " ")}
+                {salesCase!.dealSummary.deploymentOption.replace(/_/g, " ")}
               </span>
             </Badge>
-            <span className="text-sm text-muted-foreground font-mono">{salesCase.caseCode}</span>
+            <span className="text-sm text-muted-foreground font-mono">{salesCase!.caseCode}</span>
           </div>
 
-          <h1 className="text-3xl font-bold tracking-tight mb-2">{salesCase.title}</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">{salesCase!.title}</h1>
 
           <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Building2 className="h-4 w-4" />
-              <span>{salesCase.client.name}</span>
+              <span>{salesCase!.client.name}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" />
-              <span>Closed {salesCase.closedDate}</span>
+              <span>Closed {salesCase!.closedDate}</span>
             </div>
           </div>
         </div>
@@ -203,7 +227,7 @@ export default async function SalesCaseDetailPage({
                 <Building2 className="h-5 w-5" />
                 Client Background
               </h2>
-              <p className="text-muted-foreground leading-relaxed">{salesCase.clientBackground}</p>
+              <p className="text-muted-foreground leading-relaxed">{salesCase!.clientBackground}</p>
             </section>
 
             <Separator />
@@ -215,7 +239,7 @@ export default async function SalesCaseDetailPage({
                 Requirements & Pain Points
               </h2>
               <ul className="space-y-2">
-                {salesCase.requirementsAndPainPoints.map((point, i) => (
+                {salesCase!.requirementsAndPainPoints.map((point, i) => (
                   <li key={i} className="flex gap-3 text-sm text-muted-foreground">
                     <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                     <span>{point}</span>
@@ -233,7 +257,7 @@ export default async function SalesCaseDetailPage({
                 Module Decision Rationale
               </h2>
               <div>
-                {salesCase.moduleDecisionRationale.map((item, i) => (
+                {salesCase!.moduleDecisionRationale.map((item, i) => (
                   <ModuleRationaleRow key={i} item={item} />
                 ))}
               </div>
@@ -251,7 +275,7 @@ export default async function SalesCaseDetailPage({
                 <Card>
                   <CardContent className="pt-5">
                     <TeamTable
-                      members={salesCase.implementationTeam.vendorSide}
+                      members={salesCase!.implementationTeam.vendorSide}
                       label="Vendor Side"
                     />
                   </CardContent>
@@ -259,7 +283,7 @@ export default async function SalesCaseDetailPage({
                 <Card>
                   <CardContent className="pt-5">
                     <TeamTable
-                      members={salesCase.implementationTeam.clientSide}
+                      members={salesCase!.implementationTeam.clientSide}
                       label="Client Side"
                     />
                   </CardContent>
@@ -267,7 +291,7 @@ export default async function SalesCaseDetailPage({
               </div>
             </section>
 
-            {salesCase.issuesFaced.length > 0 && (
+            {salesCase!.issuesFaced.length > 0 && (
               <>
                 <Separator />
                 <section>
@@ -276,7 +300,7 @@ export default async function SalesCaseDetailPage({
                     Issues & Resolutions
                   </h2>
                   <div>
-                    {salesCase.issuesFaced.map((item, i) => (
+                    {salesCase!.issuesFaced.map((item, i) => (
                       <IssueRow key={i} item={item} />
                     ))}
                   </div>
@@ -321,21 +345,21 @@ export default async function SalesCaseDetailPage({
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Contract</span>
-                    <span className="font-medium capitalize">{salesCase.dealSummary.contractTerm}</span>
+                    <span className="font-medium capitalize">{salesCase!.dealSummary.contractTerm}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Named Users</span>
-                    <span className="font-medium">{salesCase.dealSummary.namedUsers}</span>
+                    <span className="font-medium">{salesCase!.dealSummary.namedUsers}</span>
                   </div>
-                  {salesCase.dealSummary.additionalUsers > 0 && (
+                  {salesCase!.dealSummary.additionalUsers > 0 && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Additional Users</span>
-                      <span className="font-medium">+{salesCase.dealSummary.additionalUsers}</span>
+                      <span className="font-medium">+{salesCase!.dealSummary.additionalUsers}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Go-live</span>
-                    <span className="font-medium">{salesCase.dealSummary.goLiveWeeks} weeks</span>
+                    <span className="font-medium">{salesCase!.dealSummary.goLiveWeeks} weeks</span>
                   </div>
                 </div>
 
@@ -344,7 +368,7 @@ export default async function SalesCaseDetailPage({
                 <div>
                   <p className="text-sm font-medium mb-2">Modules Sold</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {salesCase.dealSummary.modulesSold.map((mod) => (
+                    {salesCase!.dealSummary.modulesSold.map((mod) => (
                       <Badge key={mod} variant="outline" className="text-xs font-mono">
                         {mod}
                       </Badge>
@@ -357,11 +381,11 @@ export default async function SalesCaseDetailPage({
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Account Executive</span>
-                    <span className="font-medium text-right max-w-[60%]">{salesCase.accountExecutive}</span>
+                    <span className="font-medium text-right max-w-[60%]">{salesCase!.accountExecutive}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Solution Engineer</span>
-                    <span className="font-medium text-right max-w-[60%]">{salesCase.solutionEngineer}</span>
+                    <span className="font-medium text-right max-w-[60%]">{salesCase!.solutionEngineer}</span>
                   </div>
                 </div>
               </CardContent>
@@ -376,7 +400,7 @@ export default async function SalesCaseDetailPage({
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
-                {Object.entries(salesCase.outcomes).map(([k, v]) =>
+                {Object.entries(salesCase!.outcomes).map(([k, v]) =>
                   v !== undefined ? (
                     <div key={k} className="flex justify-between gap-2 py-1 border-b last:border-0">
                       <span className="text-muted-foreground">{formatLabel(k)}</span>
@@ -396,7 +420,7 @@ export default async function SalesCaseDetailPage({
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-1.5">
-                  {salesCase.tags.map((tag) => (
+                  {salesCase!.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
                     </Badge>
