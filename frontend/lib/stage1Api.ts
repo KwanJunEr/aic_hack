@@ -122,7 +122,27 @@ export interface Stage1ApiResponse {
   message?: string
 }
 
+export interface Stage1SessionDocument extends Stage1PipelineData {
+  id?: string
+  session_id?: string
+  transcript_id?: string
+  user_id?: string
+  status?: string
+  current_stage?: string
+  created_at?: string
+  updated_at?: string
+}
+
 // ── API helpers ───────────────────────────────────────────────────────────
+
+async function get<T>(path: string): Promise<T> {
+  const res = await fetch(`${BASE}${path}`, { credentials: "include" })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Request failed" }))
+    throw new Error(err.detail ?? "Request failed")
+  }
+  return res.json()
+}
 
 async function post<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
@@ -168,4 +188,18 @@ export function confirmStage1(body: {
   session_id: string
 }): Promise<Stage1ApiResponse> {
   return post("/pipeline/stage1/confirm", body)
+}
+
+// ── Stage 1 session read endpoints ────────────────────────────────────────
+
+export function getSessionById(docId: string): Promise<Stage1SessionDocument> {
+  return get(`/stage1-sessions/${docId}`)
+}
+
+export function getSessionByTranscriptId(transcriptId: string): Promise<Stage1SessionDocument> {
+  return get(`/stage1-sessions/by-transcript/${transcriptId}`)
+}
+
+export function getLatestSession(): Promise<Stage1SessionDocument> {
+  return get(`/stage1-sessions/latest`)
 }
