@@ -106,7 +106,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathName === item.href}
+                    isActive={pathName === item.href || pathName.startsWith(item.href)}
                     tooltip={item.title}
                     className="hover:bg-primary/10 hover:text-primary data-[active=true]:bg-primary/15 data-[active=true]:text-primary"
                   >

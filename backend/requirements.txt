@@ -72,4 +72,9 @@ python-multipart
 openai
 pymupdf
 python-docx
-aiofiles  
+aiofiles
+
+# =========================
+# Vector Store (RAG)
+# =========================
+chromadb

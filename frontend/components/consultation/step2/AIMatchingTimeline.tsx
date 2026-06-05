@@ -8,19 +8,19 @@ const steps = [
     id: 1,
     label: "Loading requirement context",
     icon: Layers,
-    detail: "Parsing 5 extracted requirements...",
+    detail: "Parsing extracted requirements...",
   },
   {
     id: 2,
     label: "Querying catalog via Agentic RAG",
     icon: Search,
-    detail: "Searching across 156 product SKUs...",
+    detail: "Searching across product SKUs...",
   },
   {
     id: 3,
-    label: "Matched 2 relevant products",
+    label: "Matching relevant products",
     icon: CheckCircle,
-    detail: "Nexus WMS, Nexus TMS identified...",
+    detail: "In process of matching ...",
   },
   {
     id: 4,
@@ -32,7 +32,7 @@ const steps = [
     id: 5,
     label: "Building optimized solution set",
     icon: Check,
-    detail: "Generating recommendation with 4 modules...",
+    detail: "Generating recommendation....",
   },
 ]
 
