@@ -12,7 +12,6 @@ def _col():
     return db[COLLECTION]
 
 
-
 # ---------------------------------------------------------------------------
 # Write
 # ---------------------------------------------------------------------------
@@ -83,3 +82,32 @@ async def delete_session(session_id: str, user_id: str) -> bool:
         "user_id": user_id,
     })
     return result.deleted_count == 1
+
+
+
+async def get_latest_session(user_id: str) -> Optional[dict]:
+    """Return the most recently created session for a user, including combined_text."""
+    return await _col().find_one(
+        {"user_id": user_id},
+        sort=[("created_at", -1)],
+    )
+
+
+async def search_by_text(user_id: str, query: str) -> list[dict]:
+    """
+    Case-insensitive regex search across the combined_text field.
+ 
+    Returns the full document including combined_text.
+    """
+    regex_filter = {
+        "user_id": user_id,
+        "combined_text": {"$regex": query, "$options": "i"},
+    }
+ 
+    cursor = (
+        _col()
+        .find(regex_filter)
+        .sort("created_at", -1)
+    )
+ 
+    return await cursor.to_list(length=100)

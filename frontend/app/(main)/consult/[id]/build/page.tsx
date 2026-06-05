@@ -1,13 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState } from "react"
 import { ArrowLeft, ArrowRight, Compass } from "lucide-react"
 import Link from "next/link"
 import { RequirementsSummary } from "@/components/consultation/step2/RequirementsSummary"
 import { AiMatchingTimeline } from "@/components/consultation/step2/AIMatchingTimeline"
 import { ProductRecommendations } from "@/components/consultation/step2/ProductRecommendations"
 
-export default function Step2Page() {
+export default function Step2Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const [stage, setStage] = useState<"summary" | "processing" | "results">("summary")
 
   const handleAnalyze = () => {
@@ -23,7 +24,7 @@ export default function Step2Page() {
       <div className="container mx-auto px-4 py-2">
         {/* Back link */}
         <Link
-          href="/consult/new"
+          href={`/consult/${id}/extraction`}
           className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -43,7 +44,7 @@ export default function Step2Page() {
             </div>
             {stage === "results" && (
               <Link
-                href="/consult/1/proposal-create"
+                href={`/consult/${id}/proposal-create`}
                 className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white brand-gradient shadow-lg shadow-rose-500/25 hover:opacity-90 transition-opacity"
               >
                 Next: Step 3

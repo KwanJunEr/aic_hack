@@ -5,7 +5,9 @@ from app.db.repositories.upload_session_repo import (
     create_session,
     delete_session,
     get_session,
+    get_latest_session,
     list_sessions,
+    search_by_text,
 )
 from app.schema.upload_schema import (
     FileSessionCreate,
@@ -91,3 +93,17 @@ async def fetch_sessions(
  
 async def remove_session(session_id: str, user_id: str) -> bool:
     return await delete_session(session_id, user_id)
+
+
+# ── Phase 4 — search (new) ────────────────────────────────────────────────────
+ 
+async def fetch_latest_session(user_id: str) -> Optional[FileSessionResponse]:
+    """Return the most recently created session for a user, including combined_text."""
+    doc = await get_latest_session(user_id)
+    return _doc_to_response(doc) if doc else None
+
+
+async def search_sessions_by_text(user_id: str, query: str) -> list[dict]:
+    """Search sessions whose combined_text matches the query string."""
+    docs = await search_by_text(user_id, query)
+    return [_doc_to_response(d).model_dump() for d in docs]

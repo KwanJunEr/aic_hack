@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState } from "react"
 import { ArrowLeft, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import { SolutionSummary } from "@/components/consultation/step3/SolutionSummary"
@@ -8,7 +8,8 @@ import { ProposalTimeline } from "@/components/consultation/step3/ProposalTimeli
 import { ProposalDocument } from "@/components/consultation/step3/ProposalDocument"
 import { HumanReview } from "@/components/consultation/step3/HumanReview"
 
-export default function Step3Page() {
+export default function Step3Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const [stage, setStage] = useState<"summary" | "generating" | "results">("summary")
 
   const handleGenerate = () => {
@@ -30,7 +31,7 @@ export default function Step3Page() {
       <div className="container mx-auto px-4 py-2">
         {/* Back Link */}
         <Link
-          href="/consult/1/build"
+          href={`/consult/${id}/build`}
           className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
