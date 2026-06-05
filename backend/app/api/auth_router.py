@@ -38,10 +38,10 @@ async def login_user(
 
         response.set_cookie(
             key="access_token",
-            value=token, 
-            httponly=True, 
-            secure=False, 
-            samesite="lax",
+            value=token,
+            httponly=True,
+            secure=True,
+            samesite="none",
             max_age=60 * 60 * 24  # 1 day
         )
 

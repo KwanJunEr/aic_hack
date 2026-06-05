@@ -23,6 +23,7 @@ app = FastAPI(title="AICHack Backend", lifespan=lifespan)
 origins = [
     "http://localhost:3000",   # Next.js frontend
     "http://127.0.0.1:3000",
+    "https://rectify-ab8exmg82-jonaskwans-projects.vercel.app",
 
     # add production frontend later
     # "https://yourdomain.com"
