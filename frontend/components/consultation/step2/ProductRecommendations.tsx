@@ -508,7 +508,7 @@ export function ProductRecommendations({
                               <div className="text-right shrink-0">
                                 <p className="text-xs font-medium text-foreground">
                                   {/* RM {emp.daily_rate_myr.toLocaleString()} */}
-                                 RM {Math.max(300, Math.min(emp.daily_rate_myr, 500))} / day
+                                 RM {Math.max(300, Math.min(emp.daily_rate_myr, 300))} / day
                                 </p>
                                 <p className="text-[10px] text-muted-foreground">/day</p>
                               </div>
@@ -559,7 +559,7 @@ export function ProductRecommendations({
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Resource Cost</span>
-                    <span className="font-medium text-foreground">RM 15,000</span>
+                    <span className="font-medium text-foreground">RM 12,000</span>
                   </div>
                 </div>
               </div>

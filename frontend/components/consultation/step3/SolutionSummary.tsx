@@ -31,7 +31,7 @@ export function SolutionSummary({ onGenerate }: SolutionSummaryProps) {
             </div>
             <span className="text-sm font-medium text-muted-foreground">Requirements</span>
           </div>
-          <p className="text-lg font-semibold text-foreground">12 Validated</p>
+          <p className="text-lg font-semibold text-foreground">All Validated</p>
           <p className="text-sm text-muted-foreground mt-1">High confidence extraction</p>
         </div>
 
@@ -43,8 +43,8 @@ export function SolutionSummary({ onGenerate }: SolutionSummaryProps) {
             </div>
             <span className="text-sm font-medium text-muted-foreground">Products</span>
           </div>
-          <p className="text-lg font-semibold text-foreground">4 Modules</p>
-          <p className="text-sm text-muted-foreground mt-1">Nexus WMS Suite</p>
+          <p className="text-lg font-semibold text-foreground">1 Modules</p>
+          <p className="text-sm text-muted-foreground mt-1">Nexus WMS Core</p>
         </div>
 
         {/* Estimated Value */}
@@ -55,7 +55,7 @@ export function SolutionSummary({ onGenerate }: SolutionSummaryProps) {
             </div>
             <span className="text-sm font-medium text-muted-foreground">Est. Value</span>
           </div>
-          <p className="text-lg font-semibold text-foreground">RM 244,800</p>
+          <p className="text-lg font-semibold text-foreground">RM 45,000 - RM 50,000</p>
           <p className="text-sm text-muted-foreground mt-1">Annual contract</p>
         </div>
       </div>
@@ -70,10 +70,7 @@ export function SolutionSummary({ onGenerate }: SolutionSummaryProps) {
             <h4 className="text-sm font-medium text-muted-foreground mb-3">Selected Modules</h4>
             <div className="space-y-2">
               {[
-                { code: "WMS-CORE", name: "Core Warehouse Management", price: "RM 85,000" },
-                { code: "WMS-YARD", name: "Yard Management", price: "RM 48,000" },
-                { code: "WMS-ANALYTICS", name: "Advanced Analytics", price: "RM 42,000" },
-                { code: "WMS-3PL", name: "3PL Multi-tenant", price: "RM 25,000" },
+                { code: "WMS-CORE", name: "Core Warehouse Management", price: "RM 35,000" },
               ].map((module) => (
                 <div
                   key={module.code}
@@ -94,11 +91,11 @@ export function SolutionSummary({ onGenerate }: SolutionSummaryProps) {
             <h4 className="text-sm font-medium text-muted-foreground mb-3">Key Requirements Addressed</h4>
             <div className="space-y-2">
               {[
-                "Real-time inventory tracking across 5 warehouses",
-                "SAP S/4HANA integration with bi-directional sync",
-                "Multi-tenant 3PL client management",
-                "Advanced yard scheduling and dock management",
-                "Predictive analytics for demand forecasting",
+                "Budget initially under RM 50K, approval pending",
+                "SAP S/4HANA integration with bi-directional sync and mobile app for drivers",
+                "Dispatched manually using spreadsheets causing delays",
+                "Small IT team requires low-maintenance solutions",
+                "Aim for implementation by end of Q1 before Q2",
               ].map((req, i) => (
                 <div
                   key={i}
