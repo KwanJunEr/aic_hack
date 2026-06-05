@@ -10,20 +10,8 @@ import {
 } from "@/components/ui/chart"
 
 const data = [
-  { date: "Jun 1",  p50: 0.92, p90: 1.84, p99: 3.10 },
-  { date: "Jun 2",  p50: 1.05, p90: 2.01, p99: 3.45 },
-  { date: "Jun 3",  p50: 0.88, p90: 1.72, p99: 2.90 },
-  { date: "Jun 4",  p50: 1.20, p90: 2.34, p99: 4.01 },
-  { date: "Jun 5",  p50: 1.34, p90: 2.56, p99: 4.30 },
-  { date: "Jun 6",  p50: 1.18, p90: 2.22, p99: 3.80 },
-  { date: "Jun 7",  p50: 1.42, p90: 2.71, p99: 4.55 },
-  { date: "Jun 8",  p50: 1.10, p90: 2.10, p99: 3.60 },
-  { date: "Jun 9",  p50: 1.28, p90: 2.45, p99: 4.10 },
-  { date: "Jun 10", p50: 1.15, p90: 2.18, p99: 3.70 },
-  { date: "Jun 11", p50: 1.35, p90: 2.60, p99: 4.40 },
-  { date: "Jun 12", p50: 1.24, p90: 2.38, p99: 3.95 },
-  { date: "Jun 13", p50: 1.30, p90: 2.50, p99: 4.20 },
-  { date: "Jun 14", p50: 1.22, p90: 2.30, p99: 3.88 },
+  { date: "Jun 5 (Yesterday)", p50: 0.81, p90: 1.52, p99: 2.70 },
+  { date: "Jun 6 (Today)",     p50: 0.75, p90: 1.38, p99: 2.45 },
 ]
 
 const chartConfig = {
@@ -37,7 +25,7 @@ export function LatencyChart() {
     <Card className="border-border/60 shadow-sm">
       <CardHeader>
         <CardTitle className="text-base font-semibold">Response Latency</CardTitle>
-        <CardDescription>P50 / P90 / P99 in seconds — last 14 days</CardDescription>
+        <CardDescription>P50 / P90 / P99 in seconds — yesterday &amp; today · gpt-4o-mini</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-64 w-full">

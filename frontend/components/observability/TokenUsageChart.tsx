@@ -10,20 +10,8 @@ import {
 } from "@/components/ui/chart"
 
 const data = [
-  { date: "Jun 1", input: 42000, output: 18000 },
-  { date: "Jun 2", input: 61000, output: 24000 },
-  { date: "Jun 3", input: 55000, output: 21000 },
-  { date: "Jun 4", input: 78000, output: 31000 },
-  { date: "Jun 5", input: 92000, output: 38000 },
-  { date: "Jun 6", input: 84000, output: 35000 },
-  { date: "Jun 7", input: 110000, output: 44000 },
-  { date: "Jun 8", input: 97000, output: 40000 },
-  { date: "Jun 9", input: 125000, output: 51000 },
-  { date: "Jun 10", input: 118000, output: 48000 },
-  { date: "Jun 11", input: 143000, output: 57000 },
-  { date: "Jun 12", input: 136000, output: 54000 },
-  { date: "Jun 13", input: 158000, output: 63000 },
-  { date: "Jun 14", input: 172000, output: 69000 },
+  { date: "Jun 5 (Yesterday)", input: 37200, output: 11800 },
+  { date: "Jun 6 (Today)",     input: 2480,  output: 660   },
 ]
 
 const chartConfig = {
@@ -37,14 +25,14 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const formatK = (v: number) => `${(v / 1000).toFixed(0)}k`
+const formatK = (v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
 
 export function TokenUsageChart() {
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader>
         <CardTitle className="text-base font-semibold">Token Usage Over Time</CardTitle>
-        <CardDescription>Daily input vs output tokens — last 14 days</CardDescription>
+        <CardDescription>Input vs output tokens — yesterday &amp; today · gpt-4o-mini</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-64 w-full">

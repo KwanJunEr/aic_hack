@@ -10,20 +10,8 @@ import {
 } from "@/components/ui/chart"
 
 const data = [
-  { date: "Jun 1",  success: 410, failed: 8  },
-  { date: "Jun 2",  success: 530, failed: 12 },
-  { date: "Jun 3",  success: 490, failed: 7  },
-  { date: "Jun 4",  success: 620, failed: 15 },
-  { date: "Jun 5",  success: 710, failed: 18 },
-  { date: "Jun 6",  success: 680, failed: 11 },
-  { date: "Jun 7",  success: 780, failed: 22 },
-  { date: "Jun 8",  success: 740, failed: 14 },
-  { date: "Jun 9",  success: 830, failed: 19 },
-  { date: "Jun 10", success: 800, failed: 16 },
-  { date: "Jun 11", success: 870, failed: 21 },
-  { date: "Jun 12", success: 850, failed: 13 },
-  { date: "Jun 13", success: 910, failed: 24 },
-  { date: "Jun 14", success: 890, failed: 17 },
+  { date: "Jun 5 (Yesterday)", success: 29, failed: 1 },
+  { date: "Jun 6 (Today)",     success: 10, failed: 0 },
 ]
 
 const chartConfig = {
@@ -36,7 +24,7 @@ export function RunsChart() {
     <Card className="border-border/60 shadow-sm">
       <CardHeader>
         <CardTitle className="text-base font-semibold">Pipeline Runs</CardTitle>
-        <CardDescription>Daily successful vs failed executions — last 14 days</CardDescription>
+        <CardDescription>Successful vs failed executions — yesterday &amp; today · gpt-4o-mini</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-64 w-full">

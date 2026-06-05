@@ -22,7 +22,7 @@ import type { Stage1PipelineData, RequirementField } from "@/lib/stage1Api"
 
 interface ExtractedItem {
   id: string
-  icon: React.ElementType
+  icon: React.ComponentType<{ className?: string }>
   label: string
   value: string
   confidence: number

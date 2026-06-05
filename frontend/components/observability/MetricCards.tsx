@@ -4,18 +4,18 @@ import { Zap, Clock, Activity, AlertTriangle } from "lucide-react"
 const metrics = [
   {
     title: "Total Tokens",
-    value: "2.4M",
-    change: "+18%",
+    value: "52,140",
+    change: "+6%",
     changeType: "positive" as const,
     icon: Zap,
     iconBg: "bg-violet-500/10",
     iconColor: "text-violet-500",
-    sub: "this month",
+    sub: "yesterday – today",
   },
   {
     title: "Avg Latency",
-    value: "1.24s",
-    change: "-9%",
+    value: "0.78s",
+    change: "-4%",
     changeType: "positive" as const,
     icon: Clock,
     iconBg: "bg-emerald-500/10",
@@ -24,8 +24,8 @@ const metrics = [
   },
   {
     title: "Total Runs",
-    value: "8,312",
-    change: "+23%",
+    value: "40",
+    change: "+8%",
     changeType: "positive" as const,
     icon: Activity,
     iconBg: "bg-primary/10",
@@ -34,13 +34,13 @@ const metrics = [
   },
   {
     title: "Error Rate",
-    value: "1.8%",
-    change: "-0.4%",
-    changeType: "positive" as const,
+    value: "2.5%",
+    change: "+0.5%",
+    changeType: "negative" as const,
     icon: AlertTriangle,
     iconBg: "bg-amber-500/10",
     iconColor: "text-amber-500",
-    sub: "last 7 days",
+    sub: "yesterday – today",
   },
 ]
 

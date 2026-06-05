@@ -141,7 +141,7 @@ export function ChainOfThoughtsCard({ data }: ChainOfThoughtsCardProps) {
                   <span className={`h-2 w-2 rounded-full shrink-0 ${step.dot}`} />
                   <span className={`text-sm font-medium ${step.color}`}>{step.agent}</span>
                   {"confidence" in step && step.confidence != null && (
-                    <span className="text-xs text-muted-foreground">({step.confidence}%)</span>
+                    <span className="text-xs text-muted-foreground">({Number(step.confidence)}%)</span>
                   )}
                 </div>
                 {isOpen ? (
