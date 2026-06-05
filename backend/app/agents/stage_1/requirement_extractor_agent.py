@@ -21,7 +21,7 @@ Extract and structure the following fields with a confidence score (0-100) for e
 
 After your reasoning block, emit ONLY this JSON — no preamble, no markdown fences:
 {
-  "budget":                 { "value": 220000, "currency": "RM", "confidence": 82 },
+  "budget":                 { "value": 50000, "currency": "RM", "confidence": 82 },
   "timeline":               { "value": "3 months (before Q2)", "confidence": 88 },
   "location":               { "value": "Not specified", "confidence": null },
   "technical_requirements": { "value": "Oracle DB integration, low maintenance", "confidence": 85 },
@@ -34,6 +34,7 @@ After your reasoning block, emit ONLY this JSON — no preamble, no markdown fen
 RULES:
 - If a field is not mentioned set value to "Not specified" and confidence to null.
 - Confidence: 100=verbatim, 70-99=clear inference, 40-69=weak, <40=guess.
+- budget MUST always be extracted if ANY monetary amount, cost figure, or price range is mentioned — use the numeric RM value.
 - key_points must be a list of 5 to 6 strings, each capturing a distinct main point.
 - summary must be a single cohesive paragraph (2-4 sentences).
 """

@@ -2,13 +2,18 @@
 
 import { use, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, ArrowRight, AlertTriangle } from "lucide-react"
+import { ArrowLeft, ArrowRight, AlertTriangle, BarChart2, Brain, ShieldCheck, Lightbulb } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AiTimeline } from "@/components/consultation/new/AITimeline"
 import { ExtractedResults } from "@/components/consultation/new/ExtractedResults"
 import { DealReadinessCard } from "@/components/consultation/new/DealReadinessCard"
 import { ChainOfThoughtsCard } from "@/components/consultation/new/ChainOfThoughtsCard"
+import { SentimentUrgencyCard } from "@/components/consultation/new/SentimentUrgencyCard"
+import { ObjectionAnticipatorCard } from "@/components/consultation/new/ObjectionAnticipatorCard"
+import { ReviewCard } from "@/components/consultation/new/ReviewCard"
+import { SalesInsightsPanel } from "@/components/consultation/new/SalesInsightsPanel"
 import { useCurrentUser } from "@/context/UserContext"
 import {
   runStage1,
@@ -36,7 +41,6 @@ export default function ConsultationResultsPage({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Fire pipeline on mount once user is resolved — do NOT block navigation
   useEffect(() => {
     if (!user?.id) return
     let cancelled = false
@@ -56,15 +60,13 @@ export default function ConsultationResultsPage({
       } catch (err) {
         if (cancelled) return
         console.error("[stage1] pipeline error:", err)
-        setStage("results") // show fallback UI, never leave user on blank screen
+        setStage("results")
         toast.error("There is an error in AI processing")
       }
     }
 
     run()
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [id, user?.id])
 
   const handleAccept = useCallback(async () => {
@@ -196,18 +198,78 @@ export default function ConsultationResultsPage({
         {stage === "processing" && <AiTimeline />}
 
         {stage === "results" && (
-          <div className="grid gap-6 lg:grid-cols-[1fr_480px]">
-            <ExtractedResults
+          <div className="space-y-6">
+            <Tabs defaultValue="extraction">
+              <TabsList className="mb-6 h-10 gap-1 bg-white/60 border border-border/50 rounded-xl shadow-sm backdrop-blur-sm p-1">
+                <TabsTrigger
+                  value="extraction"
+                  className="flex items-center gap-1.5 rounded-lg text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  <BarChart2 className="h-3.5 w-3.5" />
+                  Extraction &amp; Readiness
+                </TabsTrigger>
+                <TabsTrigger
+                  value="sentiment"
+                  className="flex items-center gap-1.5 rounded-lg text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  <Brain className="h-3.5 w-3.5" />
+                  Sentiment &amp; Urgency
+                </TabsTrigger>
+                <TabsTrigger
+                  value="insights"
+                  className="flex items-center gap-1.5 rounded-lg text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Objections &amp; Insights
+                </TabsTrigger>
+                <TabsTrigger
+                  value="sales"
+                  className="flex items-center gap-1.5 rounded-lg text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  <Lightbulb className="h-3.5 w-3.5" />
+                  Sales Insights
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Tab 1 — Extraction & Readiness */}
+              <TabsContent value="extraction">
+                <div className="grid gap-6 lg:grid-cols-[1fr_480px]">
+                  <ExtractedResults data={pipelineData} />
+                  <DealReadinessCard data={pipelineData} />
+                </div>
+              </TabsContent>
+
+              {/* Tab 2 — Sentiment & Urgency */}
+              <TabsContent value="sentiment">
+                <div className="max-w-2xl">
+                  <SentimentUrgencyCard data={pipelineData} />
+                </div>
+              </TabsContent>
+
+              {/* Tab 3 — Objections & Insights */}
+              <TabsContent value="insights">
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <ObjectionAnticipatorCard data={pipelineData} />
+                  <ChainOfThoughtsCard data={pipelineData} />
+                </div>
+              </TabsContent>
+
+              {/* Tab 4 — Sales Insights */}
+              <TabsContent value="sales">
+                <div className="w-full">
+                  <SalesInsightsPanel data={pipelineData} />
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            {/* Review card — always visible across all tabs */}
+            <ReviewCard
               data={pipelineData}
               onAccept={handleAccept}
               onEdit={handleEdit}
               onReject={handleReject}
               isSubmitting={isSubmitting}
             />
-            <div className="flex flex-col gap-6">
-              <DealReadinessCard data={pipelineData} />
-              <ChainOfThoughtsCard data={pipelineData} />
-            </div>
           </div>
         )}
       </div>

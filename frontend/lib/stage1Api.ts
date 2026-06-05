@@ -76,13 +76,39 @@ export interface CotTrace {
   duration_ms?: number | null
 }
 
+export interface SentimentData {
+  sentiment?: string
+  sentiment_reasoning?: string
+  urgency_level?: string
+  urgency_score?: number
+  urgency_signals?: string[]
+  deal_pressure?: string
+  negative_signals?: string[]
+  positive_signals?: string[]
+  recommended_tone?: string
+}
+
+export interface Objection {
+  category?: string
+  objection?: string
+  likelihood?: string
+  counter_response?: string
+  evidence?: string
+}
+
+export interface ObjectionData {
+  objections?: Objection[]
+  total_objections?: number
+  highest_risk_objection?: string
+}
+
 export interface Stage1PipelineData {
   requirements?: Requirements
   gaps?: GapData
   budget_validation?: BudgetValidation
   past_deals?: PastDeals
-  sentiment?: Record<string, unknown>
-  objections?: Record<string, unknown>
+  sentiment?: SentimentData
+  objections?: ObjectionData
   cot_traces?: CotTrace[]
   session_id?: string
 }

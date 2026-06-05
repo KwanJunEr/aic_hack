@@ -13,30 +13,17 @@ async def save_stage1_session(state: dict) -> bool:
     """
     Upsert the full pipeline state into MongoDB.
     Called only by A7 — never before HITL acceptance.
+    Saves the complete state so no agent output is lost.
     """
     now = datetime.now(timezone.utc)
 
-    doc = {
-        "session_id":            state.get("session_id", ""),
-        "user_id":               state.get("user_id", ""),
-        "transcript_id":         state.get("transcript_id", ""),
-        "transcript":            state.get("transcript", ""),
-        "requirements":          state.get("requirements", {}),
-        "gaps":                  state.get("gaps", {}),
-        "budget_validation":     state.get("budget_validation", {}),
-        "past_deals":            state.get("past_deals", {}),
-        "sentiment":             state.get("sentiment", {}),
-        "objections":            state.get("objections", {}),
-        "missing_info":          state.get("missing_info", {}),
-        "cot_traces":            state.get("cot_traces", []),
-        "a2a_messages":          state.get("a2a_messages", []),
-        "hitl_stage1_decision":  state.get("hitl_stage1_decision", ""),
-        "status":                "completed",
-        "updated_at":            now,
-    }
+    # Persist every field in the pipeline state — nothing cherry-picked
+    doc = {k: v for k, v in state.items()}
+    doc["status"] = "completed"
+    doc["updated_at"] = now
 
     result = await stage1_collection.update_one(
-        {"session_id": doc["session_id"]},
+        {"session_id": doc.get("session_id", "")},
         {
             "$set":         doc,
             "$setOnInsert": {"created_at": now},
