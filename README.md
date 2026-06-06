@@ -1,4 +1,4 @@
-# Autonomous Sales Engineer (ASE)
+# Autonomous Sales Engineer (ASE) - Champion
 
 An AI-powered pre-sales proposal generation system built for enterprise software consultancies. Given a client meeting transcript (text, PDF, or audio), the system autonomously extracts requirements, matches product catalog SKUs, generates tiered proposals, and delivers a client-ready document — with Human-in-the-Loop (HITL) checkpoints at every critical decision point.
 
